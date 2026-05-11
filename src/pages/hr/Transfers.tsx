@@ -3,7 +3,7 @@ import { getAllTransfers, reviewTransfer } from '../../api/transfers';
 import Layout from '../../components/layout/Layout';
 import Spinner from '../../components/common/Spinner';
 import Badge from '../../components/common/Badge';
-import { Application } from '../../types/index';
+import { type Application } from '../../types/index';
 import toast from 'react-hot-toast';
 import { ArrowLeftRight, CheckCircle, XCircle, Info, X } from 'lucide-react';
 

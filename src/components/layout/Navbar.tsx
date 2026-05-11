@@ -17,7 +17,12 @@ const Navbar = () => {
     <nav className="bg-blue-900 text-white px-4 md:px-6 py-4 flex justify-between items-center shadow-lg relative">
       <div>
         <h1 className="font-bold text-base md:text-lg">
-          GES {user?.role === 'admin' ? 'Admin' : 'HR'} Portal
+          {user?.role === 'examiner'
+            ? 'GES Examiner Portal'
+            : user?.role === 'admin'
+            ? 'GES Admin Portal'
+            : 'GES HR Portal'
+          }
         </h1>
         <p className="text-blue-200 text-xs">Ghana Education Service</p>
       </div>

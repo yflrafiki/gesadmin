@@ -28,8 +28,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const res = await loginUser({ email, password });
     const { token, user } = res.data;
 
-    if (!['hr_officer', 'admin'].includes(user.role)) {
-      throw new Error('This portal is for HR Officers and Admins only');
+    if (!['hr_officer', 'admin', 'examiner'].includes(user.role)) {
+      throw new Error('This portal is for HR Officers, Admins and examiners only');
     }
 
     localStorage.setItem('token', token);

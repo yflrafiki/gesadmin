@@ -11,6 +11,9 @@ import Reports from './pages/admin/Reports';
 import AuditLog from './pages/admin/AuditLog';
 import Spinner from './components/common/Spinner';
 import HRExams from './pages/hr/Exams';
+import BlockchainNodes from './pages/hr/BlockchainNodes';
+import ExaminerDashboard from './pages/examiner/Dashboard';
+import ExaminerExams from './pages/examiner/Exams';
 
 const ProtectedRoute = ({
   children, roles,
@@ -41,6 +44,8 @@ function App() {
         <Route path="/hr/promotions" element={<ProtectedRoute roles={['hr_officer']}><HRPromotions /></ProtectedRoute>} />
         <Route path="/hr/credentials" element={<ProtectedRoute roles={['hr_officer']}><HRCredentials /></ProtectedRoute>} />
         <Route path="/hr/exams" element={<ProtectedRoute roles={['hr_officer']}><HRExams /></ProtectedRoute>} />
+        <Route path="/hr/blockchain" element={<ProtectedRoute roles={['hr_officer']}><BlockchainNodes /></ProtectedRoute>} />
+
         {/* Admin Routes */}
         <Route path="/admin/dashboard" element={<ProtectedRoute roles={['admin']}><AdminDashboard /></ProtectedRoute>} />
         <Route path="/admin/teachers" element={<ProtectedRoute roles={['admin']}><HRTeachers /></ProtectedRoute>} />
@@ -50,10 +55,15 @@ function App() {
         <Route path="/admin/reports" element={<ProtectedRoute roles={['admin']}><Reports /></ProtectedRoute>} />
         <Route path="/admin/audit" element={<ProtectedRoute roles={['admin']}><AuditLog /></ProtectedRoute>} />
         <Route path="/admin/exams" element={<ProtectedRoute roles={['admin']}><HRExams /></ProtectedRoute>} />
+        <Route path="/admin/blockchain" element={<ProtectedRoute roles={['admin']}><BlockchainNodes /></ProtectedRoute>} />
+        {/* Examiner Routes */}
+        <Route path="/examiner/dashboard" element={<ProtectedRoute roles={['examiner']}><ExaminerDashboard /></ProtectedRoute>} />
+        <Route path="/examiner/exams" element={<ProtectedRoute roles={['examiner']}><ExaminerExams /></ProtectedRoute>} />
         {/* Root */}
         <Route path="/" element={
           !user ? <Navigate to="/login" replace /> :
           user.role === 'admin' ? <Navigate to="/admin/dashboard" replace /> :
+          user.role === 'examiner' ? <Navigate to="/examiner/dashboard" replace /> :
           <Navigate to="/hr/dashboard" replace />
         } />
         <Route path="*" element={<Navigate to="/" replace />} />

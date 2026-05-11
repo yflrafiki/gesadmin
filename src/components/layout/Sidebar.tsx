@@ -14,6 +14,8 @@ const hrLinks = [
   { to: '/hr/promotions', icon: TrendingUp, label: 'Promotions' },
    { to: '/hr/exams', icon: BookOpen, label: 'Examinations' },
   { to: '/hr/credentials', icon: Shield, label: 'Credentials' },
+  { to: '/hr/blockchain', icon: Shield, label: 'Blockchain' },
+
 ];
 
 const adminLinks = [
@@ -25,12 +27,20 @@ const adminLinks = [
   { to: '/admin/credentials', icon: Shield, label: 'Credentials' },
   { to: '/admin/reports', icon: BarChart3, label: 'Reports' },
   { to: '/admin/audit', icon: FileText, label: 'Audit Logs' },
+  { to: '/admin/blockchain', icon: Shield, label: 'Blockchain' },
+];
+
+const examinerLinks = [
+  { to: '/examiner/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/examiner/exams', icon: BookOpen, label: 'Examinations' },
 ];
 
 const Sidebar = () => {
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
-  const links = user?.role === 'admin' ? adminLinks : hrLinks;
+  const links = 
+  user?.role === 'admin' ? adminLinks :
+  user?.role === 'examiner' ? examinerLinks : hrLinks;
 
   const navLinks = (
     <nav className="flex flex-col gap-1 px-3 pt-4">
@@ -42,7 +52,9 @@ const Sidebar = () => {
           className={({ isActive }) =>
             `flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition ${
               isActive
-                ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-700'
+              ? user?.role === 'examiner'
+                ? 'bg-purple-50 text-purple-700 border-l-4 border-purple-700'
+                : 'bg-blue-50 text-blue-700 border-l-4 border-blue-700'
                 : 'text-gray-600 hover:bg-gray-50'
             }`
           }

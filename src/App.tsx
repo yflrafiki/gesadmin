@@ -14,6 +14,8 @@ import HRExams from './pages/hr/Exams';
 import BlockchainNodes from './pages/hr/BlockchainNodes';
 import ExaminerDashboard from './pages/examiner/Dashboard';
 import ExaminerExams from './pages/examiner/Exams';
+import PromotionDocuments from './pages/hr/PromotionDocuments';
+import ChangePassword from './pages/ChangePassword';
 
 const ProtectedRoute = ({
   children, roles,
@@ -45,6 +47,8 @@ function App() {
         <Route path="/hr/credentials" element={<ProtectedRoute roles={['hr_officer']}><HRCredentials /></ProtectedRoute>} />
         <Route path="/hr/exams" element={<ProtectedRoute roles={['hr_officer']}><HRExams /></ProtectedRoute>} />
         <Route path="/hr/blockchain" element={<ProtectedRoute roles={['hr_officer']}><BlockchainNodes /></ProtectedRoute>} />
+        <Route path="/hr/promotion-documents" element={<ProtectedRoute roles={['hr_officer']}><PromotionDocuments /></ProtectedRoute>} />
+        <Route path="/hr/change-password" element={<ProtectedRoute roles={['hr_officer']}><ChangePassword /></ProtectedRoute>} />
 
         {/* Admin Routes */}
         <Route path="/admin/dashboard" element={<ProtectedRoute roles={['admin']}><AdminDashboard /></ProtectedRoute>} />
@@ -56,9 +60,11 @@ function App() {
         <Route path="/admin/audit" element={<ProtectedRoute roles={['admin']}><AuditLog /></ProtectedRoute>} />
         <Route path="/admin/exams" element={<ProtectedRoute roles={['admin']}><HRExams /></ProtectedRoute>} />
         <Route path="/admin/blockchain" element={<ProtectedRoute roles={['admin']}><BlockchainNodes /></ProtectedRoute>} />
+        <Route path="/admin/change-password" element={<ProtectedRoute roles={['admin']}><ChangePassword /></ProtectedRoute>} />
         {/* Examiner Routes */}
         <Route path="/examiner/dashboard" element={<ProtectedRoute roles={['examiner']}><ExaminerDashboard /></ProtectedRoute>} />
         <Route path="/examiner/exams" element={<ProtectedRoute roles={['examiner']}><ExaminerExams /></ProtectedRoute>} />
+        <Route path="/examiner/change-password" element={<ProtectedRoute roles={['examiner']}><ChangePassword /></ProtectedRoute>} />
         {/* Root */}
         <Route path="/" element={
           !user ? <Navigate to="/login" replace /> :

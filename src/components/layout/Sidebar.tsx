@@ -6,6 +6,11 @@ import {
   TrendingUp, Shield, BarChart3, FileText, Menu, X,
   BookOpen
 } from 'lucide-react';
+import { Key } from 'lucide-react';
+
+// Add to hrLinks, adminLinks, and examinerLinks
+
+
 
 const hrLinks = [
   { to: '/hr/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -15,6 +20,8 @@ const hrLinks = [
    { to: '/hr/exams', icon: BookOpen, label: 'Examinations' },
   { to: '/hr/credentials', icon: Shield, label: 'Credentials' },
   { to: '/hr/blockchain', icon: Shield, label: 'Blockchain' },
+  { to: '/hr/promotion-documents', icon: FileText, label: 'Promo Documents' },
+  { to: '/hr/change-password', icon: Key, label: 'Change Password' },
 
 ];
 
@@ -28,11 +35,14 @@ const adminLinks = [
   { to: '/admin/reports', icon: BarChart3, label: 'Reports' },
   { to: '/admin/audit', icon: FileText, label: 'Audit Logs' },
   { to: '/admin/blockchain', icon: Shield, label: 'Blockchain' },
+  { to: '/admin/change-password', icon: Key, label: 'Change Password' },
 ];
 
 const examinerLinks = [
   { to: '/examiner/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/examiner/exams', icon: BookOpen, label: 'Examinations' },
+  { to: '/examiner/change-password', icon: Key, label: 'Change Password' },
+
 ];
 
 const Sidebar = () => {

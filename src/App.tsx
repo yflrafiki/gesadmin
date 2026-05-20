@@ -16,6 +16,7 @@ import ExaminerDashboard from './pages/examiner/Dashboard';
 import ExaminerExams from './pages/examiner/Exams';
 import PromotionDocuments from './pages/hr/PromotionDocuments';
 import ChangePassword from './pages/ChangePassword';
+import AddTeacher from './pages/hr/AddTeacher';
 
 const ProtectedRoute = ({
   children, roles,
@@ -49,6 +50,7 @@ function App() {
         <Route path="/hr/blockchain" element={<ProtectedRoute roles={['hr_officer']}><BlockchainNodes /></ProtectedRoute>} />
         <Route path="/hr/promotion-documents" element={<ProtectedRoute roles={['hr_officer']}><PromotionDocuments /></ProtectedRoute>} />
         <Route path="/hr/change-password" element={<ProtectedRoute roles={['hr_officer']}><ChangePassword /></ProtectedRoute>} />
+        <Route path="/hr/teachers/add" element={<ProtectedRoute roles={['hr_officer', 'admin']}><AddTeacher /></ProtectedRoute>} />
 
         {/* Admin Routes */}
         <Route path="/admin/dashboard" element={<ProtectedRoute roles={['admin']}><AdminDashboard /></ProtectedRoute>} />
@@ -61,6 +63,7 @@ function App() {
         <Route path="/admin/exams" element={<ProtectedRoute roles={['admin']}><HRExams /></ProtectedRoute>} />
         <Route path="/admin/blockchain" element={<ProtectedRoute roles={['admin']}><BlockchainNodes /></ProtectedRoute>} />
         <Route path="/admin/change-password" element={<ProtectedRoute roles={['admin']}><ChangePassword /></ProtectedRoute>} />
+        <Route path="/admin/teachers/add" element={<ProtectedRoute roles={['admin']}><AddTeacher /></ProtectedRoute>} />
         {/* Examiner Routes */}
         <Route path="/examiner/dashboard" element={<ProtectedRoute roles={['examiner']}><ExaminerDashboard /></ProtectedRoute>} />
         <Route path="/examiner/exams" element={<ProtectedRoute roles={['examiner']}><ExaminerExams /></ProtectedRoute>} />

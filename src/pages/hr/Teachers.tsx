@@ -4,8 +4,11 @@ import Layout from '../../components/layout/Layout';
 import Spinner from '../../components/common/Spinner';
 import toast from 'react-hot-toast';
 import { Search, Eye, X, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { UserPlus } from 'lucide-react';
 
 const Teachers = () => {
+  const navigate = useNavigate();
   const [teachers, setTeachers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -54,9 +57,18 @@ const Teachers = () => {
       <div className="space-y-6">
 
         {/* Header */}
-        <div>
-          <h2 className="text-xl md:text-2xl font-bold text-gray-800">Teachers</h2>
-          <p className="text-gray-500 text-sm">View teacher records and profiles</p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 className="text-xl md:text-2xl font-bold text-gray-800">Teachers</h2>
+            <p className="text-gray-500 text-sm">View teacher profiles, documents and credentials</p>
+          </div>
+          <button
+            onClick={() => navigate('/hr/teachers/add')}
+            className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-lg text-sm transition w-fit"
+          >
+            <UserPlus size={16} />
+            Add Teacher
+          </button>
         </div>
 
         {/* Search */}

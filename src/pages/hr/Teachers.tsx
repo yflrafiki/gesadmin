@@ -3,16 +3,19 @@ import { getAllTeachers } from '../../api/teachers';
 import Layout from '../../components/layout/Layout';
 import Spinner from '../../components/common/Spinner';
 import toast from 'react-hot-toast';
-import { Search, Eye, X, User } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Search, Eye, X, User, Edit3 } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { UserPlus } from 'lucide-react';
 
 const Teachers = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [teachers, setTeachers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<any | null>(null);
+
+  const basePath = location.pathname.startsWith('/admin') ? '/admin' : '/hr';
 
   const fetchTeachers = async () => {
     try {
@@ -146,13 +149,20 @@ const Teachers = () => {
                           {(t.employment_status || 'active').replace('_', ' ')}
                         </span>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 flex gap-2">
                         <button
                           onClick={() => setSelected(t)}
                           className="flex items-center gap-1 text-xs bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg transition"
                         >
                           <Eye size={14} />
                           View
+                        </button>
+                        <button
+                          onClick={() => navigate(`${basePath}/teachers/${t.id}/edit`)}
+                          className="flex items-center gap-1 text-xs bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-3 py-1.5 rounded-lg transition"
+                        >
+                          <Edit3 size={14} />
+                          Edit
                         </button>
                       </td>
                     </tr>

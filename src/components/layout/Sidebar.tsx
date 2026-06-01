@@ -19,9 +19,9 @@ const hrLinks = [
   { to: '/hr/promotions', icon: TrendingUp, label: 'Promotions' },
    { to: '/hr/exams', icon: BookOpen, label: 'Examinations' },
   { to: '/hr/credentials', icon: Shield, label: 'Credentials' },
-  { to: '/hr/blockchain', icon: Shield, label: 'Blockchain' },
   { to: '/hr/promotion-documents', icon: FileText, label: 'Promo Documents' },
   { to: '/hr/change-password', icon: Key, label: 'Change Password' },
+
 
 ];
 
@@ -36,6 +36,7 @@ const adminLinks = [
   { to: '/admin/audit', icon: FileText, label: 'Audit Logs' },
   { to: '/admin/blockchain', icon: Shield, label: 'Blockchain' },
   { to: '/admin/change-password', icon: Key, label: 'Change Password' },
+  { to: '/admin/blockchain-references', icon: Shield, label: 'Blockchain Refs' },
 ];
 
 const examinerLinks = [

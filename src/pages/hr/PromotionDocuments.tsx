@@ -127,7 +127,6 @@ const PromotionDocuments = () => {
         ) : (
           <div className="space-y-3">
             {filtered.map((doc) => {
-              const validation = parseValidation(doc);
               const isAutoApproved = doc.hr_decision === 'approved' && !doc.hr_reviewed;
               const needsManualReview = doc.hr_decision === 'manual_review' && !doc.hr_reviewed;
 

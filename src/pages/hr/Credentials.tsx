@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { verifyByTxId } from '../../api/credentials';
-import { getTransferReport } from '../../api/reports';
 import Layout from '../../components/layout/Layout';
 import Spinner from '../../components/common/Spinner';
 import Badge from '../../components/common/Badge';

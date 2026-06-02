@@ -60,7 +60,7 @@ const BlockchainReferences = () => {
       Object.entries(form).forEach(([key, value]) => {
         if (value) formData.append(key, value);
       });
-      const res = await API.post('/blockchain/upload-reference', formData, {
+      await API.post('/blockchain/upload-reference', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       toast.success('Document anchored to blockchain successfully!');

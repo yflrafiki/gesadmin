@@ -4,7 +4,7 @@ import Layout from '../../components/layout/Layout';
 import Spinner from '../../components/common/Spinner';
 import Badge from '../../components/common/Badge';
 import toast from 'react-hot-toast';
-import { BarChart3, ArrowLeftRight, TrendingUp } from 'lucide-react';
+import { ArrowLeftRight, TrendingUp } from 'lucide-react';
 
 const Reports = () => {
   const [summary, setSummary] = useState<any>(null);

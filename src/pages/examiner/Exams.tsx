@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from '../../context/AuthContext';
 import { createExam, getAllExams, publishExam, closeExam, getExamResults } from '../../api/exams';
 import Layout from '../../components/layout/Layout';
 import Spinner from '../../components/common/Spinner';
@@ -41,6 +42,8 @@ const ExaminerExams = () => {
     questions: [emptyQuestion()],
   });
 
+  const { user } = useAuth();
+
   const fetchExams = async () => {
     try {
       const res = await getAllExams();
@@ -69,6 +72,10 @@ const ExaminerExams = () => {
   };
 
   const handleCreate = async () => {
+    if (!user || user.role !== 'examiner') {
+      toast.error('You do not have permission to create exams.');
+      return;
+    }
     if (!form.title) { toast.error('Title is required'); return; }
     if (form.questions.some(q =>
       !q.question || !q.option_a || !q.option_b || !q.option_c || !q.option_d

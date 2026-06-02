@@ -1,4 +1,5 @@
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const rawApiUrl = import.meta.env.VITE_API_URL?.replace(/\/+$/, '');
 const defaultApiUrl = import.meta.env.PROD ? 'https://ges-backend-mhro.onrender.com' : '';
@@ -27,6 +28,9 @@ API.interceptors.response.use(
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       window.location.href = '/login';
+    }
+    if (error.response?.status === 403) {
+      toast.error(error.response?.data?.message || 'Forbidden — insufficient permissions');
     }
     return Promise.reject(error);
   }

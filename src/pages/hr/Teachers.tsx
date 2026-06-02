@@ -16,6 +16,7 @@ const Teachers = () => {
   const [selected, setSelected] = useState<any | null>(null);
 
   const basePath = location.pathname.startsWith('/admin') ? '/admin' : '/hr';
+  const apiUrl = import.meta.env.VITE_API_URL?.replace(/\/+$/, '') || 'http://localhost:5000';
 
   const fetchTeachers = async () => {
     try {
@@ -112,7 +113,7 @@ const Teachers = () => {
                       <td className="px-4 py-3">
                         {t.passport_photo ? (
                           <img
-                            src={`http://localhost:5000/${t.passport_photo}`}
+                            src={t.passport_photo_url ? t.passport_photo_url : `${apiUrl}/${t.passport_photo}`}
                             alt="Photo"
                             className="w-9 h-9 rounded-full object-cover border border-gray-200"
                             onError={(e) => {
@@ -193,7 +194,7 @@ const Teachers = () => {
                 <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
                   {selected.passport_photo ? (
                     <img
-                      src={`http://localhost:5000/${selected.passport_photo}`}
+                      src={selected.passport_photo_url ? selected.passport_photo_url : `${apiUrl}/${selected.passport_photo}`}
                       alt="Passport"
                       className="w-24 h-24 rounded-full object-cover border-4 border-blue-100 shadow"
                       onError={(e) => {

@@ -26,39 +26,41 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 md:p-8">
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#1C0A00' }}>
+      <div className="rounded-2xl shadow-2xl w-full max-w-md p-6 md:p-8" style={{ backgroundColor: '#FFFEF9' }}>
         <div className="text-center mb-8">
-          <div className="bg-amber-600 text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+          <div className="text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: '#B8860B' }}>
             <span className="text-xl font-bold">GES</span>
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">HR / Admin Portal</h1>
-          <p className="text-gray-500 text-sm mt-1">Ghana Education Service</p>
+          <h1 className="text-2xl font-bold" style={{ color: '#1C0A00' }}>HR / Admin Portal</h1>
+          <p className="text-sm mt-1" style={{ color: '#9a6f09' }}>Ghana Education Service</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium mb-1" style={{ color: '#2D1A00' }}>
               Email Address
             </label>
             <input
               type="email"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              className="w-full rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 text-sm"
+              style={{ border: '1px solid #C9A227', color: '#1C0A00', backgroundColor: '#FFFEF9' }}
               placeholder="Enter your email"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium mb-1" style={{ color: '#2D1A00' }}>
               Password
             </label>
             <input
               type="password"
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              className="w-full rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 text-sm"
+              style={{ border: '1px solid #C9A227', color: '#1C0A00', backgroundColor: '#FFFEF9' }}
               placeholder="Enter your password"
               required
             />
@@ -66,7 +68,8 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2.5 rounded-lg transition disabled:opacity-50 text-sm"
+            className="w-full text-white font-semibold py-2.5 rounded-lg transition disabled:opacity-50 text-sm"
+            style={{ backgroundColor: '#B8860B' }}
           >
             {loading ? 'Logging in...' : 'Login'}
           </button>

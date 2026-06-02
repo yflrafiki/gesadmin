@@ -83,7 +83,7 @@ const Teachers = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by name or staff ID..."
-            className="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
           />
         </div>
 

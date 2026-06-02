@@ -16,7 +16,7 @@ const REGIONS = [
   'Savannah', 'Bono East', 'Ahafo', 'Western North', 'Oti', 'North East'
 ];
 
-const inputClass = 'w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500';
+const inputClass = 'w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500';
 const labelClass = 'block text-sm font-medium text-gray-700 mb-1';
 
 interface FieldProps {

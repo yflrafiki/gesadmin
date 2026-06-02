@@ -38,7 +38,7 @@ const Teachers = () => {
 
   const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
     <div className="space-y-3">
-      <h4 className="text-xs font-bold text-blue-700 uppercase tracking-wider border-b border-blue-50 pb-1">
+      <h4 className="text-xs font-bold text-amber-700 uppercase tracking-wider border-b border-amber-50 pb-1">
         {title}
       </h4>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -121,8 +121,8 @@ const Teachers = () => {
                             }}
                           />
                         ) : (
-                          <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center">
-                            <User size={16} className="text-blue-600" />
+                          <div className="w-9 h-9 rounded-full bg-amber-50 flex items-center justify-center">
+                            <User size={16} className="text-amber-600" />
                           </div>
                         )}
                       </td>
@@ -135,7 +135,7 @@ const Teachers = () => {
                       </td>
                       <td className="px-4 py-3 text-gray-500">{t.current_district}</td>
                       <td className="px-4 py-3">
-                        <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs">
+                        <span className="bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full text-xs">
                           {t.current_grade}
                         </span>
                       </td>
@@ -202,8 +202,8 @@ const Teachers = () => {
                       }}
                     />
                   ) : (
-                    <div className="w-24 h-24 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                      <User size={40} className="text-blue-600" />
+                    <div className="w-24 h-24 rounded-full bg-amber-50 flex items-center justify-center shrink-0">
+                      <User size={40} className="text-amber-600" />
                     </div>
                   )}
                   <div className="text-center sm:text-left">
@@ -221,7 +221,7 @@ const Teachers = () => {
                       }`}>
                         {(selected.employment_status || 'active').replace('_', ' ').toUpperCase()}
                       </span>
-                      <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-medium">
+                      <span className="bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full text-xs font-medium">
                         {selected.current_grade}
                       </span>
                       <span className="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-medium">

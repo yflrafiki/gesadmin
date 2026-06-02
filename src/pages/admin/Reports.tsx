@@ -54,7 +54,7 @@ const Reports = () => {
             { label: 'Verified Credentials', value: summary?.credentials.find((c: any) => c.verification_status === 'verified')?.count || 0 },
           ].map(({ label, value }) => (
             <div key={label} className="bg-white rounded-xl shadow-sm p-4 text-center">
-              <p className="text-2xl font-bold text-blue-700">{value}</p>
+              <p className="text-2xl font-bold text-amber-700">{value}</p>
               <p className="text-xs text-gray-500 mt-1">{label}</p>
             </div>
           ))}
@@ -72,7 +72,7 @@ const Reports = () => {
                 onClick={() => setActiveTab(key as any)}
                 className={`flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition ${
                   activeTab === key
-                    ? 'border-blue-700 text-blue-700'
+                    ? 'border-amber-700 text-amber-700'
                     : 'border-transparent text-gray-500 hover:text-gray-700'
                 }`}
               >

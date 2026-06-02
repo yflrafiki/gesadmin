@@ -78,7 +78,7 @@ const BlockchainReferences = () => {
   const getOrgColor = (org: string) => {
     if (org === 'GTECMSP') return 'bg-green-100 text-green-700';
     if (org === 'NTCMSP') return 'bg-purple-100 text-purple-700';
-    return 'bg-blue-100 text-blue-700';
+    return 'bg-amber-50 text-amber-700';
   };
 
   if (loading) return <Layout><Spinner /></Layout>;
@@ -107,14 +107,14 @@ const BlockchainReferences = () => {
         </div>
 
         {/* How it works */}
-        <div className="bg-blue-900 text-white rounded-xl p-5">
+        <div className="bg-slate-900 text-white rounded-xl p-5">
           <h3 className="font-bold mb-3 flex items-center gap-2">
             <Shield size={20} />
             How Blockchain Reference Verification Works
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <div className="bg-blue-800 rounded-lg p-3">
-              <p className="font-semibold text-blue-200 mb-1">1. Upload Reference</p>
+              <p className="font-semibold text-slate-300 mb-1">1. Upload Reference</p>
               <p className="text-blue-100 text-xs">
                 HR/Admin uploads official documents (degrees, licenses) for each teacher.
                 Each document is hashed and anchored across GES, GTEC and NTC nodes.
@@ -151,7 +151,7 @@ const BlockchainReferences = () => {
           </div>
           <button
             onClick={() => fetchReferences(searchStaffId)}
-            className="bg-blue-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800 transition"
+            className="bg-amber-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-amber-700 transition"
           >
             Search
           </button>

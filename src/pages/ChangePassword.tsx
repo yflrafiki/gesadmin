@@ -98,7 +98,7 @@ const ChangePassword = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 bg-blue-700 hover:bg-blue-800 text-white py-2.5 rounded-lg text-sm transition disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 text-white py-2.5 rounded-lg text-sm transition disabled:opacity-50"
             >
               <Save size={16} />
               {loading ? 'Changing...' : 'Change Password'}

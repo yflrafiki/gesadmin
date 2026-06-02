@@ -32,13 +32,13 @@ const Navbar = () => {
         <div className="flex items-center gap-2 text-sm">
           <User size={16} />
           <span>{user?.email}</span>
-          <span className="bg-blue-700 px-2 py-0.5 rounded-full text-xs capitalize">
+          <span className="bg-amber-600 px-2 py-0.5 rounded-full text-xs capitalize">
             {user?.role?.replace('_', ' ')}
           </span>
         </div>
         <button
           onClick={handleLogout}
-          className="flex items-center gap-1 bg-blue-700 hover:bg-blue-600 px-3 py-1.5 rounded-lg text-sm transition"
+          className="flex items-center gap-1 bg-amber-600 hover:bg-amber-700 px-3 py-1.5 rounded-lg text-sm transition"
         >
           <LogOut size={16} />
           Logout
@@ -51,14 +51,14 @@ const Navbar = () => {
       </button>
 
       {menuOpen && (
-        <div className="absolute top-16 left-0 right-0 bg-blue-900 z-50 px-4 py-4 flex flex-col gap-3 md:hidden shadow-lg">
+        <div className="absolute top-16 left-0 right-0 bg-slate-900 z-50 px-4 py-4 flex flex-col gap-3 md:hidden shadow-lg">
           <div className="flex items-center gap-2 text-sm">
             <User size={16} />
             <span>{user?.email}</span>
           </div>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-1 bg-blue-700 px-3 py-2 rounded-lg text-sm w-full"
+            className="flex items-center gap-1 bg-amber-600 px-3 py-2 rounded-lg text-sm w-full"
           >
             <LogOut size={16} />
             Logout

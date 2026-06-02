@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import { FileText, Search } from 'lucide-react';
 
 const actionColors: Record<string, string> = {
-  LOGIN: 'bg-blue-100 text-blue-700',
+  LOGIN: 'bg-amber-100 text-amber-700',
   REGISTER: 'bg-green-100 text-green-700',
   UPDATE_PROFILE: 'bg-yellow-100 text-yellow-700',
   CREATE_TRANSFER: 'bg-purple-100 text-purple-700',

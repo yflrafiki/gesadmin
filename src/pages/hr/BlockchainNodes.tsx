@@ -71,15 +71,15 @@ const BlockchainNodes = () => {
         </div>
 
         {/* Network Banner */}
-        <div className="bg-blue-900 text-white rounded-xl p-5 md:p-6">
+        <div className="bg-slate-900 text-white rounded-xl p-5 md:p-6">
           <div className="flex items-center gap-3 mb-3">
             <Shield size={28} />
             <div>
               <h3 className="font-bold text-lg">{data?.network}</h3>
-              <p className="text-blue-200 text-sm">Consensus Algorithm: {data?.consensus}</p>
+              <p className="text-slate-300 text-sm">Consensus Algorithm: {data?.consensus}</p>
             </div>
           </div>
-          <p className="text-blue-100 text-sm leading-relaxed">
+          <p className="text-slate-400 text-sm leading-relaxed">
             All teacher credentials are verified across 3 institutional nodes using
             PBFT consensus. A minimum of 2 out of 3 nodes must validate before a
             credential is written to the immutable ledger.
@@ -92,7 +92,7 @@ const BlockchainNodes = () => {
             <div key={node.id}
               className="bg-white rounded-xl shadow-sm p-6 text-center space-y-3">
               <div className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto ${
-                index === 0 ? 'bg-blue-100' :
+                index === 0 ? 'bg-amber-50' :
                 index === 1 ? 'bg-green-100' : 'bg-purple-100'
               }`}>
                 <Server size={24} className={
@@ -106,7 +106,7 @@ const BlockchainNodes = () => {
               </div>
               <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
                 node.role === 'orderer'
-                  ? 'bg-blue-100 text-blue-700'
+                  ? 'bg-amber-50 text-amber-700'
                   : 'bg-green-100 text-green-700'
               }`}>
                 {node.role.toUpperCase()}
@@ -134,12 +134,12 @@ const BlockchainNodes = () => {
               value={txId}
               onChange={(e) => setTxId(e.target.value)}
               placeholder="Paste blockchain transaction ID..."
-              className="flex-1 border border-gray-300 rounded-lg px-3 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 border border-gray-300 rounded-lg px-3 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-amber-500"
             />
             <button
               onClick={handleVerify}
               disabled={verifying || !txId.trim()}
-              className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2.5 rounded-lg text-sm transition disabled:opacity-50"
+              className="flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white px-4 py-2.5 rounded-lg text-sm transition disabled:opacity-50"
             >
               <Search size={16} />
               {verifying ? 'Verifying...' : 'Verify'}
@@ -234,7 +234,7 @@ const BlockchainNodes = () => {
         {/* How it Works */}
         <div className="bg-white rounded-xl shadow-sm p-5">
           <h3 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
-            <Lock size={16} className="text-blue-600" />
+            <Lock size={16} className="text-amber-600" />
             How Credential Verification Works
           </h3>
           <div className="space-y-3">
@@ -249,14 +249,14 @@ const BlockchainNodes = () => {
               { step: '8', node: null, title: 'Ledger Write', desc: 'Transaction ID and hash written immutably — cannot be altered or deleted' },
             ].map(({ step, node, title, desc }) => (
               <div key={step} className="flex items-start gap-4">
-                <div className="w-8 h-8 bg-blue-700 text-white rounded-full flex items-center justify-center text-sm font-bold shrink-0">
+                <div className="w-8 h-8 bg-amber-600 text-white rounded-full flex items-center justify-center text-sm font-bold shrink-0">
                   {step}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <p className="font-medium text-gray-800 text-sm">{title}</p>
                     {node && (
-                      <span className="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full font-medium">
+                      <span className="bg-amber-50 text-amber-700 text-xs px-2 py-0.5 rounded-full font-medium">
                         {node}
                       </span>
                     )}

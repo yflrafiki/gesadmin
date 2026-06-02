@@ -53,9 +53,9 @@ const HRDashboard = () => {
       <div className="space-y-6">
 
         {/* Header */}
-        <div className="bg-blue-900 text-white rounded-xl p-5 md:p-6">
+        <div className="bg-slate-900 text-white rounded-xl p-5 md:p-6">
           <h2 className="text-xl md:text-2xl font-bold">HR Officer Dashboard</h2>
-          <p className="text-blue-200 mt-1 text-sm">
+          <p className="text-slate-300 mt-1 text-sm">
             Manage teacher records, transfers, promotions and credentials
           </p>
         </div>
@@ -66,7 +66,7 @@ const HRDashboard = () => {
             icon={Users}
             label="Total Teachers"
             value={data?.summary.total_teachers || 0}
-            color="bg-blue-500"
+            color="bg-amber-500"
           />
           <StatCard
             icon={Clock}
@@ -94,7 +94,7 @@ const HRDashboard = () => {
           {/* Transfer Status */}
           <div className="bg-white rounded-xl shadow-sm p-5">
             <h3 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
-              <ArrowLeftRight size={18} className="text-blue-600" />
+              <ArrowLeftRight size={18} className="text-amber-600" />
               Transfer Applications
             </h3>
             <div className="space-y-3">
@@ -109,7 +109,7 @@ const HRDashboard = () => {
                     <div className="flex items-center gap-3">
                       <div className="w-24 md:w-32 bg-gray-100 rounded-full h-2">
                         <div
-                          className="bg-blue-500 h-2 rounded-full"
+                          className="bg-amber-500 h-2 rounded-full"
                           style={{
                             width: `${Math.min(
                               (parseInt(t.count) /
@@ -167,7 +167,7 @@ const HRDashboard = () => {
         {/* Teachers by Region */}
         <div className="bg-white rounded-xl shadow-sm p-5">
           <h3 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
-            <Users size={18} className="text-blue-600" />
+            <Users size={18} className="text-amber-600" />
             Teachers by Region
           </h3>
           {data?.teachers_by_region.length === 0 ? (
@@ -178,7 +178,7 @@ const HRDashboard = () => {
                 <div key={r.current_region}
                   className="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-3">
                   <span className="text-sm text-gray-600">{r.current_region || 'Unknown'}</span>
-                  <span className="font-bold text-blue-700">{r.count}</span>
+                  <span className="font-bold text-amber-700">{r.count}</span>
                 </div>
               ))}
             </div>

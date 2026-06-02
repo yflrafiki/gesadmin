@@ -3,8 +3,8 @@ import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import {
   LayoutDashboard, Users, ArrowLeftRight,
-  TrendingUp, Shield, BarChart3, FileText, Menu, X,
-  BookOpen
+  TrendingUp, BarChart3, FileText, Menu, X,
+  BookOpen, Shield
 } from 'lucide-react';
 import { Key } from 'lucide-react';
 
@@ -17,8 +17,7 @@ const hrLinks = [
   { to: '/hr/teachers', icon: Users, label: 'Teachers' },
   { to: '/hr/transfers', icon: ArrowLeftRight, label: 'Transfers' },
   { to: '/hr/promotions', icon: TrendingUp, label: 'Promotions' },
-   { to: '/hr/exams', icon: BookOpen, label: 'Examinations' },
-  { to: '/hr/credentials', icon: Shield, label: 'Credentials' },
+  { to: '/hr/exams', icon: BookOpen, label: 'Examinations' },
   { to: '/hr/promotion-documents', icon: FileText, label: 'Promo Documents' },
   { to: '/hr/change-password', icon: Key, label: 'Change Password' },
 
@@ -31,7 +30,6 @@ const adminLinks = [
   { to: '/admin/transfers', icon: ArrowLeftRight, label: 'Transfers' },
   { to: '/admin/promotions', icon: TrendingUp, label: 'Promotions' },
   { to: '/admin/exams', icon: BookOpen, label: 'Examinations' },
-  { to: '/admin/credentials', icon: Shield, label: 'Credentials' },
   { to: '/admin/reports', icon: BarChart3, label: 'Reports' },
   { to: '/admin/audit', icon: FileText, label: 'Audit Logs' },
   { to: '/admin/blockchain', icon: Shield, label: 'Blockchain' },

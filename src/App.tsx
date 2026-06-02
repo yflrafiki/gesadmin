@@ -5,7 +5,6 @@ import HRDashboard from './pages/hr/Dashboard';
 import HRTeachers from './pages/hr/Teachers';
 import HRTransfers from './pages/hr/Transfers';
 import HRPromotions from './pages/hr/Promotions';
-import HRCredentials from './pages/hr/Credentials';
 import AdminDashboard from './pages/hr/Dashboard';
 import Reports from './pages/admin/Reports';
 import AuditLog from './pages/admin/AuditLog';
@@ -47,7 +46,6 @@ function App() {
         <Route path="/hr/teachers" element={<ProtectedRoute roles={['hr_officer']}><HRTeachers /></ProtectedRoute>} />
         <Route path="/hr/transfers" element={<ProtectedRoute roles={['hr_officer']}><HRTransfers /></ProtectedRoute>} />
         <Route path="/hr/promotions" element={<ProtectedRoute roles={['hr_officer']}><HRPromotions /></ProtectedRoute>} />
-        <Route path="/hr/credentials" element={<ProtectedRoute roles={['hr_officer']}><HRCredentials /></ProtectedRoute>} />
         <Route path="/hr/exams" element={<ProtectedRoute roles={['hr_officer']}><HRExams /></ProtectedRoute>} />
         <Route path="/hr/promotion-documents" element={<ProtectedRoute roles={['hr_officer']}><PromotionDocuments /></ProtectedRoute>} />
         <Route path="/hr/change-password" element={<ProtectedRoute roles={['hr_officer']}><ChangePassword /></ProtectedRoute>} />
@@ -59,7 +57,6 @@ function App() {
         <Route path="/admin/teachers" element={<ProtectedRoute roles={['admin']}><HRTeachers /></ProtectedRoute>} />
         <Route path="/admin/transfers" element={<ProtectedRoute roles={['admin']}><HRTransfers /></ProtectedRoute>} />
         <Route path="/admin/promotions" element={<ProtectedRoute roles={['admin']}><HRPromotions /></ProtectedRoute>} />
-        <Route path="/admin/credentials" element={<ProtectedRoute roles={['admin']}><HRCredentials /></ProtectedRoute>} />
         <Route path="/admin/reports" element={<ProtectedRoute roles={['admin']}><Reports /></ProtectedRoute>} />
         <Route path="/admin/audit" element={<ProtectedRoute roles={['admin']}><AuditLog /></ProtectedRoute>} />
         <Route path="/admin/exams" element={<ProtectedRoute roles={['admin']}><HRExams /></ProtectedRoute>} />

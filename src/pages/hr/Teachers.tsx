@@ -1,26 +1,39 @@
 import { useState, useEffect } from 'react';
-import { getAllTeachers } from '../../api/teachers';
+import { getAllTeachers, deleteTeacher } from '../../api/teachers';
 import Layout from '../../components/layout/Layout';
 import Spinner from '../../components/common/Spinner';
 import toast from 'react-hot-toast';
-import { Search, Eye, X, User, Edit3 } from 'lucide-react';
+import { Search, Eye, X, User, Edit3, Trash2 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { UserPlus } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { REGIONS, QUALIFICATIONS } from '../../constants/teacherOptions';
 
 const Teachers = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
   const [teachers, setTeachers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [region, setRegion] = useState('');
+  const [qualification, setQualification] = useState('');
   const [selected, setSelected] = useState<any | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const basePath = location.pathname.startsWith('/admin') ? '/admin' : '/hr';
   const apiUrl = import.meta.env.VITE_API_URL?.replace(/\/+$/, '') || 'http://localhost:5000';
+  const isAdmin = user?.role === 'admin';
 
   const fetchTeachers = async () => {
     try {
-      const res = await getAllTeachers({ search });
+      // HR is already server-side scoped to their own region, so the region
+      // filter only makes sense (and is only shown) for admin.
+      const res = await getAllTeachers({
+        search,
+        qualification: qualification || undefined,
+        ...(isAdmin ? { region: region || undefined } : {})
+      });
       setTeachers(res.data.teachers);
     } catch (err) {
       toast.error('Failed to load teachers');
@@ -29,7 +42,23 @@ const Teachers = () => {
     }
   };
 
-  useEffect(() => { fetchTeachers(); }, [search]);
+  useEffect(() => { fetchTeachers(); }, [search, region, qualification]);
+
+  const handleDelete = async (t: any) => {
+    if (!window.confirm(`Permanently delete ${t.first_name} ${t.last_name} (${t.staff_id})? This cannot be undone.`)) {
+      return;
+    }
+    setDeletingId(t.id);
+    try {
+      await deleteTeacher(t.id);
+      toast.success('Teacher record deleted');
+      fetchTeachers();
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Failed to delete teacher');
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   const formatDate = (val: any) => {
     if (!val) return '—';
@@ -64,27 +93,74 @@ const Teachers = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h2 className="text-xl md:text-2xl font-bold text-gray-800">Teachers</h2>
-            <p className="text-gray-500 text-sm">View teacher profiles, documents and credentials</p>
+            <p className="text-gray-500 text-sm">
+              {isAdmin
+                ? 'View teacher profiles, documents and credentials — all regions'
+                : 'View teacher profiles, documents and credentials'}
+            </p>
+            {!isAdmin && user?.region && (
+              <span className="inline-block mt-1 bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full text-xs font-medium">
+                Your region: {user.region}{user.district ? ` · ${user.district}` : ''}
+              </span>
+            )}
           </div>
-          <button
-            onClick={() => navigate('/hr/teachers/add')}
-            className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-lg text-sm transition w-fit"
-          >
-            <UserPlus size={16} />
-            Add Teacher
-          </button>
+          {isAdmin && (
+            <button
+              onClick={() => navigate('/admin/teachers/add')}
+              className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-lg text-sm transition w-fit"
+            >
+              <UserPlus size={16} />
+              Add Teacher
+            </button>
+          )}
         </div>
 
-        {/* Search */}
-        <div className="relative max-w-md">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by name or staff ID..."
-            className="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
-          />
+        {/* Search & Filters */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1 max-w-md">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search by name or staff ID..."
+              className="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+            />
+          </div>
+
+          <select
+            value={qualification}
+            onChange={(e) => setQualification(e.target.value)}
+            className="border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white"
+          >
+            <option value="">All Qualifications</option>
+            {QUALIFICATIONS.map((q) => (
+              <option key={q} value={q}>{q}</option>
+            ))}
+          </select>
+
+          {isAdmin && (
+            <select
+              value={region}
+              onChange={(e) => setRegion(e.target.value)}
+              className="border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white"
+            >
+              <option value="">All Regions</option>
+              {REGIONS.map((r) => (
+                <option key={r} value={r}>{r}</option>
+              ))}
+            </select>
+          )}
+
+          {(search || qualification || region) && (
+            <button
+              onClick={() => { setSearch(''); setQualification(''); setRegion(''); }}
+              className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 px-3 py-2.5"
+            >
+              <X size={14} />
+              Clear filters
+            </button>
+          )}
         </div>
 
         {/* Table */}
@@ -165,6 +241,16 @@ const Teachers = () => {
                           <Edit3 size={14} />
                           Edit
                         </button>
+                        {isAdmin && (
+                          <button
+                            onClick={() => handleDelete(t)}
+                            disabled={deletingId === t.id}
+                            className="flex items-center gap-1 text-xs bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded-lg transition disabled:opacity-50"
+                          >
+                            <Trash2 size={14} />
+                            {deletingId === t.id ? 'Deleting...' : 'Delete'}
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ))
@@ -241,6 +327,14 @@ const Teachers = () => {
                   <InfoField label="Nationality" value={selected.nationality} />
                   <InfoField label="Hometown" value={selected.hometown} />
                   <InfoField label="Phone" value={selected.phone} />
+                  <InfoField label="House Number" value={selected.house_number} />
+                </Section>
+
+                {/* Identification */}
+                <Section title="Identification">
+                  <InfoField label="Ghana Card Number" value={selected.ghana_card_number} />
+                  <InfoField label="Ghana Card Issue Date" value={formatDate(selected.ghana_card_issue_date)} />
+                  <InfoField label="Ghana Card Expiry Date" value={formatDate(selected.ghana_card_expiry_date)} />
                 </Section>
 
                 {/* Professional Information */}

@@ -2,19 +2,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../components/layout/Layout';
 import toast from 'react-hot-toast';
-import API from '../../api/axios';
+import { registerAccount } from '../../api/auth';
 import { ChevronLeft, ChevronRight, Check, UserPlus } from 'lucide-react';
+import { TITLES, QUALIFICATIONS, MARITAL_STATUSES, EMPLOYMENT_STATUSES, GRADES, REGIONS } from '../../constants/teacherOptions';
 
-const TITLES = ['Mr', 'Mrs', 'Ms', 'Miss', 'Dr', 'Prof', 'Rev', 'Alhaji', 'Madam'];
-const QUALIFICATIONS = ['Certificate', 'Diploma', 'B.Ed', 'B.A', 'B.Sc', 'M.Ed', 'M.A', 'M.Sc', 'PhD'];
-const MARITAL_STATUSES = ['single', 'married', 'divorced', 'widowed', 'separated'];
-const EMPLOYMENT_STATUSES = ['active', 'retired', 'terminated', 'on_leave', 'suspended'];
-const GRADES = ['Grade C', 'Grade B', 'Grade A', 'Principal', 'Director'];
-const REGIONS = [
-  'Greater Accra', 'Ashanti', 'Western', 'Eastern', 'Central',
-  'Northern', 'Upper East', 'Upper West', 'Volta', 'Brong-Ahafo',
-  'Savannah', 'Bono East', 'Ahafo', 'Western North', 'Oti', 'North East'
-];
+const ROLES = ['teacher', 'hr_officer', 'examiner', 'admin'];
 
 const steps = ['Account', 'Personal', 'Professional', 'Employment', 'Health'];
 
@@ -111,6 +103,8 @@ const AddTeacher = () => {
     employment_status: 'active',
     disability_status: false,
     disability_type: '',
+    region: '',
+    district: '',
   });
 
   // ✅ Stable update function
@@ -141,11 +135,38 @@ const AddTeacher = () => {
   const handleSubmit = async () => {
     setSubmitting(true);
     try {
-      await API.post('/auth/register', form);
+      await registerAccount(form);
       toast.success(`Teacher ${form.first_name} ${form.last_name} registered successfully!`);
-      navigate('/hr/teachers');
+      navigate('/admin/teachers');
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Registration failed');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleSimpleSubmit = async () => {
+    if (!form.email || !form.password) {
+      toast.error('Email and password are required');
+      return;
+    }
+    if (form.role === 'hr_officer' && !form.region) {
+      toast.error('Region is required for HR officer accounts');
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await registerAccount({
+        email: form.email,
+        password: form.password,
+        role: form.role,
+        region: form.role === 'hr_officer' ? form.region : undefined,
+        district: form.role === 'hr_officer' ? form.district : undefined,
+      });
+      toast.success(`${form.role.replace('_', ' ')} account created successfully!`);
+      navigate('/admin/dashboard');
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Account creation failed');
     } finally {
       setSubmitting(false);
     }
@@ -256,7 +277,7 @@ const AddTeacher = () => {
               <h4 className="font-semibold text-gray-700 text-sm border-b pb-2 mb-3">
                 Registration Summary
               </h4>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-sm">
                 {[
                   ['Full Name', `${form.title} ${form.first_name} ${form.last_name}`.trim()],
                   ['Staff ID', form.staff_id],
@@ -293,21 +314,61 @@ const AddTeacher = () => {
         {/* Header */}
         <div className="flex items-center gap-3">
           <button
-            onClick={() => navigate('/hr/teachers')}
+            onClick={() => navigate('/admin/teachers')}
             className="text-gray-400 hover:text-gray-600 transition"
           >
             <ChevronLeft size={24} />
           </button>
           <div>
             <h2 className="text-xl md:text-2xl font-bold text-gray-800">
-              Register New Teacher
+              Create New Account
             </h2>
             <p className="text-gray-500 text-sm">
-              Fill in the teacher's details to create their account
+              Only admins can create accounts. Choose a role to get started.
             </p>
           </div>
         </div>
 
+        {/* Role selector */}
+        <div className="bg-white rounded-xl shadow-sm p-4">
+          <Field label="Account Role" field="role" value={form.role}
+            onChange={update} type="select" options={ROLES} required />
+        </div>
+
+        {form.role !== 'teacher' ? (
+          <div className="bg-white rounded-xl shadow-sm p-6 space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Field label="Email Address" field="email" value={form.email}
+                onChange={update} type="email" required placeholder="user@ges.gov.gh" />
+              <Field label="Password" field="password" value={form.password}
+                onChange={update} type="text" required />
+              {form.role === 'hr_officer' && (
+                <>
+                  <Field label="Region" field="region" value={form.region}
+                    onChange={update} type="select" options={REGIONS} required />
+                  <Field label="District" field="district" value={form.district}
+                    onChange={update} placeholder="e.g. Tarkwa-Nsuaem" />
+                </>
+              )}
+            </div>
+            {form.role === 'hr_officer' && (
+              <p className="text-xs text-amber-700 bg-amber-50 border border-amber-100 rounded-lg p-3">
+                This HR officer will only be able to view and manage staff within the selected region.
+              </p>
+            )}
+            <div className="flex justify-end">
+              <button
+                onClick={handleSimpleSubmit}
+                disabled={submitting}
+                className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-lg text-sm transition disabled:opacity-50"
+              >
+                <UserPlus size={16} />
+                {submitting ? 'Creating...' : 'Create Account'}
+              </button>
+            </div>
+          </div>
+        ) : (
+        <>
         {/* Progress Steps */}
         <div className="bg-white rounded-xl shadow-sm p-4">
           <div className="flex items-center">
@@ -376,6 +437,8 @@ const AddTeacher = () => {
             </button>
           )}
         </div>
+        </>
+        )}
       </div>
     </Layout>
   );

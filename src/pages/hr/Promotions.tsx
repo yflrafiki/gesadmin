@@ -132,7 +132,7 @@ const Promotions = () => {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Decision</label>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     {[
                       { value: 'approved', label: 'Approve', icon: CheckCircle, color: 'border-green-500 bg-green-50 text-green-700' },
                       { value: 'rejected', label: 'Reject', icon: XCircle, color: 'border-red-500 bg-red-50 text-red-700' },

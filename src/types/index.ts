@@ -2,6 +2,28 @@ export interface User {
   id: string;
   email: string;
   role: string;
+  region?: string | null;
+  district?: string | null;
+}
+
+export interface ChangeRequest {
+  id: string;
+  teacher_id: string;
+  field_name: string;
+  current_value: string | null;
+  requested_value: string;
+  reason: string | null;
+  status: string;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  reviewed_by_email?: string;
+  hr_notes: string | null;
+  created_at: string;
+  first_name?: string;
+  last_name?: string;
+  staff_id?: string;
+  current_region?: string;
+  current_district?: string;
 }
 
 export interface Teacher {

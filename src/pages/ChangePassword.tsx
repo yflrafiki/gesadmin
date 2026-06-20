@@ -1,16 +1,25 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { changePassword } from '../api/auth';
+import { useAuth } from '../context/AuthContext';
 import Layout from '../components/layout/Layout';
 import toast from 'react-hot-toast';
-import { Lock, Save } from 'lucide-react';
+import { Lock, Save, User, LogOut } from 'lucide-react';
 
 const ChangePassword = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     current_password: '',
     new_password: '',
     confirm_password: ''
   });
   const [loading, setLoading] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,8 +50,20 @@ const ChangePassword = () => {
     <Layout>
       <div className="max-w-md mx-auto space-y-6">
         <div>
-          <h2 className="text-xl md:text-2xl font-bold text-gray-800">Change Password</h2>
-          <p className="text-gray-500 text-sm">Update your account password</p>
+          <h2 className="text-xl md:text-2xl font-bold text-gray-800">My Account</h2>
+          <p className="text-gray-500 text-sm">Your login details and security settings</p>
+        </div>
+
+        {/* Account info */}
+        <div className="bg-white rounded-xl shadow-sm p-5 flex items-center gap-4">
+          <div className="bg-amber-50 rounded-full w-14 h-14 flex items-center justify-center shrink-0">
+            <User size={28} className="text-amber-700" />
+          </div>
+          <div>
+            <p className="text-xs text-gray-400 mb-0.5">Email Address</p>
+            <p className="text-sm font-medium text-gray-800">{user?.email}</p>
+            <p className="text-xs text-gray-400 mt-1 capitalize">{user?.role?.replace('_', ' ')}</p>
+          </div>
         </div>
 
         <div className="bg-white rounded-xl shadow-sm p-6">
@@ -105,6 +126,14 @@ const ChangePassword = () => {
             </button>
           </form>
         </div>
+
+        <button
+          onClick={handleLogout}
+          className="flex items-center justify-center gap-2 w-full bg-red-50 hover:bg-red-100 text-red-700 py-2.5 rounded-lg text-sm font-medium transition"
+        >
+          <LogOut size={16} />
+          Logout
+        </button>
       </div>
     </Layout>
   );

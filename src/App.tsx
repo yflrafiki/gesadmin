@@ -18,6 +18,8 @@ import PromotionDocuments from './pages/hr/PromotionDocuments';
 import ChangePassword from './pages/ChangePassword';
 import AddTeacher from './pages/hr/AddTeacher';
 import BlockchainReferences from './pages/hr/BlockchainReferences';
+import ChangeRequests from './pages/hr/ChangeRequests';
+import VerifiedTeachers from './pages/hr/VerifiedTeachers';
 
 const ProtectedRoute = ({
   children, roles,
@@ -48,8 +50,9 @@ function App() {
         <Route path="/hr/promotions" element={<ProtectedRoute roles={['hr_officer']}><HRPromotions /></ProtectedRoute>} />
         <Route path="/hr/exams" element={<ProtectedRoute roles={['hr_officer']}><HRExams /></ProtectedRoute>} />
         <Route path="/hr/promotion-documents" element={<ProtectedRoute roles={['hr_officer']}><PromotionDocuments /></ProtectedRoute>} />
+        <Route path="/hr/verified-teachers" element={<ProtectedRoute roles={['hr_officer']}><VerifiedTeachers /></ProtectedRoute>} />
+        <Route path="/hr/change-requests" element={<ProtectedRoute roles={['hr_officer']}><ChangeRequests /></ProtectedRoute>} />
         <Route path="/hr/change-password" element={<ProtectedRoute roles={['hr_officer']}><ChangePassword /></ProtectedRoute>} />
-        <Route path="/hr/teachers/add" element={<ProtectedRoute roles={['hr_officer', 'admin']}><AddTeacher /></ProtectedRoute>} />
         <Route path="/hr/teachers/:id/edit" element={<ProtectedRoute roles={['hr_officer']}><EditTeacher /></ProtectedRoute>} />
 
         {/* Admin Routes */}
@@ -61,7 +64,9 @@ function App() {
         <Route path="/admin/audit" element={<ProtectedRoute roles={['admin']}><AuditLog /></ProtectedRoute>} />
         <Route path="/admin/exams" element={<ProtectedRoute roles={['admin']}><HRExams /></ProtectedRoute>} />
         <Route path="/admin/blockchain" element={<ProtectedRoute roles={['admin']}><BlockchainNodes /></ProtectedRoute>} />
+        <Route path="/admin/verified-teachers" element={<ProtectedRoute roles={['admin']}><VerifiedTeachers /></ProtectedRoute>} />
         <Route path="/admin/blockchain-references" element={<ProtectedRoute roles={['admin']}><BlockchainReferences /></ProtectedRoute>} />
+        <Route path="/admin/change-requests" element={<ProtectedRoute roles={['admin']}><ChangeRequests /></ProtectedRoute>} />
         <Route path="/admin/change-password" element={<ProtectedRoute roles={['admin']}><ChangePassword /></ProtectedRoute>} />
         <Route path="/admin/teachers/add" element={<ProtectedRoute roles={['admin']}><AddTeacher /></ProtectedRoute>} />
         <Route path="/admin/teachers/:id/edit" element={<ProtectedRoute roles={['admin']}><EditTeacher /></ProtectedRoute>} />

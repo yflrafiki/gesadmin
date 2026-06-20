@@ -190,7 +190,7 @@ const BlockchainNodes = () => {
               </div>
               {verifyResult.verified && verifyResult.credential && (
                 <div className="space-y-2 text-sm">
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <p className="text-gray-500">Teacher:</p>
                     <p className="font-medium">{verifyResult.credential.teacher}</p>
                     <p className="text-gray-500">Staff ID:</p>

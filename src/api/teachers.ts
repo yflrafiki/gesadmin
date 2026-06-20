@@ -8,3 +8,6 @@ export const getTeacherById = (id: string) =>
 
 export const updateTeacher = (id: string, data: object) =>
   API.put(`/teachers/${id}`, data);
+
+export const deleteTeacher = (id: string) =>
+  API.delete(`/teachers/${id}`);

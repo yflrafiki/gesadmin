@@ -4,7 +4,7 @@ import { changePassword } from '../api/auth';
 import { useAuth } from '../context/AuthContext';
 import Layout from '../components/layout/Layout';
 import toast from 'react-hot-toast';
-import { Lock, Save, User, LogOut } from 'lucide-react';
+import { Lock, Save, User, LogOut, Eye, EyeOff } from 'lucide-react';
 
 const ChangePassword = () => {
   const { user, logout } = useAuth();
@@ -15,6 +15,7 @@ const ChangePassword = () => {
     confirm_password: ''
   });
   const [loading, setLoading] = useState(false);
+  const [showPasswords, setShowPasswords] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -75,13 +76,21 @@ const ChangePassword = () => {
               <div className="relative">
                 <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
-                  type="password"
+                  type={showPasswords ? 'text' : 'password'}
                   value={form.current_password}
                   onChange={(e) => setForm({ ...form, current_password: e.target.value })}
-                  className="w-full pl-9 border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-9 pr-10 border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Enter current password"
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPasswords((prev) => !prev)}
+                  title={showPasswords ? 'Hide passwords' : 'Show passwords'}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                >
+                  {showPasswords ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
               </div>
             </div>
             <div>
@@ -91,13 +100,21 @@ const ChangePassword = () => {
               <div className="relative">
                 <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
-                  type="password"
+                  type={showPasswords ? 'text' : 'password'}
                   value={form.new_password}
                   onChange={(e) => setForm({ ...form, new_password: e.target.value })}
-                  className="w-full pl-9 border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-9 pr-10 border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Enter new password (min 6 characters)"
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPasswords((prev) => !prev)}
+                  title={showPasswords ? 'Hide passwords' : 'Show passwords'}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                >
+                  {showPasswords ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
               </div>
             </div>
             <div>
@@ -107,13 +124,21 @@ const ChangePassword = () => {
               <div className="relative">
                 <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
-                  type="password"
+                  type={showPasswords ? 'text' : 'password'}
                   value={form.confirm_password}
                   onChange={(e) => setForm({ ...form, confirm_password: e.target.value })}
-                  className="w-full pl-9 border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-9 pr-10 border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Confirm new password"
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPasswords((prev) => !prev)}
+                  title={showPasswords ? 'Hide passwords' : 'Show passwords'}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                >
+                  {showPasswords ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
               </div>
             </div>
             <button

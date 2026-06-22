@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import {
   LayoutDashboard, Users, ArrowLeftRight,
   TrendingUp, BarChart3, FileText, Menu, X,
-  BookOpen, Shield, ClipboardEdit, UserPlus, ShieldCheck
+  BookOpen, Shield, ClipboardEdit, UserPlus, ShieldCheck, UserCog
 } from 'lucide-react';
 
 const hrLinks = [
@@ -22,6 +22,7 @@ const hrLinks = [
 const adminLinks = [
   { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/admin/teachers', icon: Users, label: 'Teachers' },
+  { to: '/admin/hr-officers', icon: UserCog, label: 'HR Officers' },
   { to: '/admin/teachers/add', icon: UserPlus, label: 'Add Account' },
   { heading: 'Applications' },
   { to: '/admin/transfers', icon: ArrowLeftRight, label: 'Transfers' },

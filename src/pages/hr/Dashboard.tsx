@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { getDashboardSummary } from '../../api/reports';
 import Layout from '../../components/layout/Layout';
 import Spinner from '../../components/common/Spinner';
+import { useAuth } from '../../context/AuthContext';
 import { type DashboardSummary } from '../../types/index';
-import { Users, ArrowLeftRight, TrendingUp, Shield, Clock } from 'lucide-react';
+import { Users, ArrowLeftRight, TrendingUp, Shield, Clock, UserCog } from 'lucide-react';
 
 const StatCard = ({
   icon: Icon, label, value, color
@@ -25,6 +26,8 @@ const StatCard = ({
 );
 
 const HRDashboard = () => {
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
   const [data, setData] = useState<DashboardSummary | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -68,6 +71,14 @@ const HRDashboard = () => {
             value={data?.summary.total_teachers || 0}
             color="bg-amber-500"
           />
+          {isAdmin && (
+            <StatCard
+              icon={UserCog}
+              label="Total HR Officers"
+              value={data?.summary.total_hr_officers || 0}
+              color="bg-blue-500"
+            />
+          )}
           <StatCard
             icon={Clock}
             label="Pending Transfers"

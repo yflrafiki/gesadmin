@@ -102,6 +102,7 @@ export interface Credential {
 export interface DashboardSummary {
   summary: {
     total_teachers: number;
+    total_hr_officers: number;
     total_applications: number;
     recent_applications_7days: number;
   };

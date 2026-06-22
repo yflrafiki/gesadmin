@@ -20,6 +20,7 @@ import AddTeacher from './pages/hr/AddTeacher';
 import BlockchainReferences from './pages/hr/BlockchainReferences';
 import ChangeRequests from './pages/hr/ChangeRequests';
 import VerifiedTeachers from './pages/hr/VerifiedTeachers';
+import HrOfficers from './pages/admin/HrOfficers';
 
 const ProtectedRoute = ({
   children, roles,
@@ -65,6 +66,7 @@ function App() {
         <Route path="/admin/exams" element={<ProtectedRoute roles={['admin']}><HRExams /></ProtectedRoute>} />
         <Route path="/admin/blockchain" element={<ProtectedRoute roles={['admin']}><BlockchainNodes /></ProtectedRoute>} />
         <Route path="/admin/verified-teachers" element={<ProtectedRoute roles={['admin']}><VerifiedTeachers /></ProtectedRoute>} />
+        <Route path="/admin/hr-officers" element={<ProtectedRoute roles={['admin']}><HrOfficers /></ProtectedRoute>} />
         <Route path="/admin/blockchain-references" element={<ProtectedRoute roles={['admin']}><BlockchainReferences /></ProtectedRoute>} />
         <Route path="/admin/change-requests" element={<ProtectedRoute roles={['admin']}><ChangeRequests /></ProtectedRoute>} />
         <Route path="/admin/change-password" element={<ProtectedRoute roles={['admin']}><ChangePassword /></ProtectedRoute>} />

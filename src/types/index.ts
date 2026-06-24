@@ -24,6 +24,8 @@ export interface ChangeRequest {
   staff_id?: string;
   current_region?: string;
   current_district?: string;
+  document_name?: string | null;
+  document_hash?: string | null;
 }
 
 export interface Teacher {

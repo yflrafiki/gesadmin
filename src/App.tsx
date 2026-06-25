@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import Login from './pages/Login';
+import VerifyEmailCode from './pages/VerifyEmailCode';
 import HRDashboard from './pages/hr/Dashboard';
 import HRTeachers from './pages/hr/Teachers';
 import HRTransfers from './pages/hr/Transfers';
@@ -43,6 +44,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/verify-email-code" element={<VerifyEmailCode />} />
 
         {/* HR Routes */}
         <Route path="/hr/dashboard" element={<ProtectedRoute roles={['hr_officer']}><HRDashboard /></ProtectedRoute>} />

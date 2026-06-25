@@ -22,6 +22,11 @@ const Login = () => {
       else if (user.role === 'examiner') navigate('/examiner/dashboard');
       else navigate('/hr/dashboard');
     } catch (err: any) {
+      if (err.response?.data?.email_verification_required) {
+        toast('Enter the code sent to your email', { icon: '📧' });
+        navigate('/verify-email-code', { state: { email: err.response.data.email } });
+        return;
+      }
       toast.error(err.message || err.response?.data?.message || 'Login failed');
     } finally {
       setLoading(false);

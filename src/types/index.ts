@@ -4,6 +4,7 @@ export interface User {
   role: string;
   region?: string | null;
   district?: string | null;
+  name?: string | null;
 }
 
 export interface ChangeRequest {

@@ -57,7 +57,9 @@ const HRDashboard = () => {
 
         {/* Header */}
         <div className="bg-slate-900 text-white rounded-xl p-5 md:p-6">
-          <h2 className="text-xl md:text-2xl font-bold">HR Officer Dashboard</h2>
+          <h2 className="text-xl md:text-2xl font-bold">
+            Welcome, {user?.name || user?.email}
+          </h2>
           <p className="text-slate-300 mt-1 text-sm">
             Manage teacher records, transfers, promotions and credentials
           </p>

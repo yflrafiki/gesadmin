@@ -25,7 +25,7 @@ const VerifyEmailCode = () => {
       const res = await verifyEmailCode({ email, code });
       const { token, user } = res.data;
       setSession(token, user);
-      toast.success('Email verified!');
+      toast.success(`Welcome, ${user.name || user.email}!`);
       if (user.role === 'admin') navigate('/admin/dashboard');
       else if (user.role === 'examiner') navigate('/examiner/dashboard');
       else navigate('/hr/dashboard');

@@ -17,7 +17,7 @@ const Login = () => {
     setLoading(true);
     try {
       const user = await login(form.email, form.password);
-      toast.success('Login successful!');
+      toast.success(`Welcome, ${user.name || user.email}!`);
       if (user.role === 'admin') navigate('/admin/dashboard');
       else if (user.role === 'examiner') navigate('/examiner/dashboard');
       else navigate('/hr/dashboard');

@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import {
   LayoutDashboard, Users, ArrowLeftRight,
   TrendingUp, BarChart3, FileText, Menu, X,
-  BookOpen, Shield, ClipboardEdit, UserPlus, ShieldCheck, UserCog
+  BookOpen, ClipboardEdit, UserPlus, ShieldCheck, UserCog
 } from 'lucide-react';
 
 const hrLinks = [
@@ -32,8 +32,6 @@ const adminLinks = [
   { to: '/admin/reports', icon: BarChart3, label: 'Reports' },
   { to: '/admin/audit', icon: FileText, label: 'Audit Logs' },
   { to: '/admin/verified-teachers', icon: ShieldCheck, label: 'Verified Teachers' },
-  { to: '/admin/blockchain', icon: Shield, label: 'Blockchain' },
-  { to: '/admin/blockchain-references', icon: Shield, label: 'Blockchain Refs' },
 ];
 
 const examinerLinks = [

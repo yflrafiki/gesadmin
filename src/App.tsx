@@ -12,13 +12,11 @@ import AuditLog from './pages/admin/AuditLog';
 import Spinner from './components/common/Spinner';
 import EditTeacher from './pages/hr/EditTeacher';
 import HRExams from './pages/hr/Exams';
-import BlockchainNodes from './pages/hr/BlockchainNodes';
 import ExaminerDashboard from './pages/examiner/Dashboard';
 import ExaminerExams from './pages/examiner/Exams';
 import PromotionDocuments from './pages/hr/PromotionDocuments';
 import ChangePassword from './pages/ChangePassword';
 import AddTeacher from './pages/hr/AddTeacher';
-import BlockchainReferences from './pages/hr/BlockchainReferences';
 import ChangeRequests from './pages/hr/ChangeRequests';
 import VerifiedTeachers from './pages/hr/VerifiedTeachers';
 import HrOfficers from './pages/admin/HrOfficers';
@@ -66,10 +64,8 @@ function App() {
         <Route path="/admin/reports" element={<ProtectedRoute roles={['admin']}><Reports /></ProtectedRoute>} />
         <Route path="/admin/audit" element={<ProtectedRoute roles={['admin']}><AuditLog /></ProtectedRoute>} />
         <Route path="/admin/exams" element={<ProtectedRoute roles={['admin']}><HRExams /></ProtectedRoute>} />
-        <Route path="/admin/blockchain" element={<ProtectedRoute roles={['admin']}><BlockchainNodes /></ProtectedRoute>} />
         <Route path="/admin/verified-teachers" element={<ProtectedRoute roles={['admin']}><VerifiedTeachers /></ProtectedRoute>} />
         <Route path="/admin/hr-officers" element={<ProtectedRoute roles={['admin']}><HrOfficers /></ProtectedRoute>} />
-        <Route path="/admin/blockchain-references" element={<ProtectedRoute roles={['admin']}><BlockchainReferences /></ProtectedRoute>} />
         <Route path="/admin/change-requests" element={<ProtectedRoute roles={['admin']}><ChangeRequests /></ProtectedRoute>} />
         <Route path="/admin/change-password" element={<ProtectedRoute roles={['admin']}><ChangePassword /></ProtectedRoute>} />
         <Route path="/admin/teachers/add" element={<ProtectedRoute roles={['admin']}><AddTeacher /></ProtectedRoute>} />

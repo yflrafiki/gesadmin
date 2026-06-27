@@ -6,6 +6,7 @@ import Badge from '../../components/common/Badge';
 import { type Application } from '../../types/index';
 import toast from 'react-hot-toast';
 import { ArrowLeftRight, CheckCircle, XCircle, Info, X, Eye } from 'lucide-react';
+import { useNotificationStream } from '../../hooks/useNotificationStream';
 
 const FILTERS = [
   { value: '', label: 'All' },
@@ -36,6 +37,15 @@ const Transfers = () => {
   };
 
   useEffect(() => { fetchTransfers(); }, [filter]);
+
+  // A new transfer request (or a re-review after "more info") changes what
+  // this list should show — refetch live instead of waiting for a manual
+  // page refresh.
+  useNotificationStream((n) => {
+    if (n.type === 'transfer_request' || n.type === 'transfer_reviewed') {
+      fetchTransfers();
+    }
+  });
 
   const handleReview = async () => {
     if (!selected || !form.status) return;

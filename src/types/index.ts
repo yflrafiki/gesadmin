@@ -73,6 +73,7 @@ export interface Application {
   requested_region?: string;
   hr_notes: string | null;
   reviewed_by: string | null;
+  reviewed_by_email?: string | null;
   reviewed_at: string | null;
   created_at: string;
   first_name?: string;

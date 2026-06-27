@@ -5,13 +5,22 @@ import Spinner from '../../components/common/Spinner';
 import Badge from '../../components/common/Badge';
 import { type Application } from '../../types/index';
 import toast from 'react-hot-toast';
-import { ArrowLeftRight, CheckCircle, XCircle, Info, X } from 'lucide-react';
+import { ArrowLeftRight, CheckCircle, XCircle, Info, X, Eye } from 'lucide-react';
+
+const FILTERS = [
+  { value: '', label: 'All' },
+  { value: 'pending', label: 'Pending' },
+  { value: 'approved', label: 'Approved' },
+  { value: 'rejected', label: 'Rejected' },
+  { value: 'more_info', label: 'More Info' },
+];
 
 const Transfers = () => {
   const [transfers, setTransfers] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('');
   const [selected, setSelected] = useState<Application | null>(null);
+  const [viewing, setViewing] = useState<Application | null>(null);
   const [reviewing, setReviewing] = useState(false);
   const [form, setForm] = useState({ status: '', hr_notes: '' });
 
@@ -56,17 +65,21 @@ const Transfers = () => {
             <h2 className="text-xl md:text-2xl font-bold text-gray-800">Transfer Applications</h2>
             <p className="text-gray-500 text-sm">Review and manage transfer requests</p>
           </div>
-          <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 w-fit"
-          >
-            <option value="">All Status</option>
-            <option value="pending">Pending</option>
-            <option value="approved">Approved</option>
-            <option value="rejected">Rejected</option>
-            <option value="more_info">More Info</option>
-          </select>
+          <div className="flex flex-wrap gap-2">
+            {FILTERS.map((f) => (
+              <button
+                key={f.value}
+                onClick={() => setFilter(f.value)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
+                  filter === f.value
+                    ? 'bg-blue-700 text-white'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* List */}
@@ -96,12 +109,20 @@ const Transfers = () => {
                     {new Date(app.created_at).toLocaleDateString()}
                   </p>
                 </div>
-                {app.status === 'pending' && (
+                {app.status === 'pending' || app.status === 'more_info' ? (
                   <button
                     onClick={() => setSelected(app)}
                     className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-lg text-sm transition w-fit shrink-0"
                   >
                     Review
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setViewing(app)}
+                    className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm transition w-fit shrink-0"
+                  >
+                    <Eye size={14} />
+                    View Details
                   </button>
                 )}
               </div>
@@ -182,6 +203,53 @@ const Transfers = () => {
                     {reviewing ? 'Submitting...' : 'Submit Decision'}
                   </button>
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* View Details Modal (already-reviewed applications) */}
+        {viewing && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6">
+              <div className="flex justify-between items-center mb-5">
+                <h3 className="font-bold text-gray-800">Transfer Application Details</h3>
+                <button onClick={() => setViewing(null)}>
+                  <X size={20} className="text-gray-500 hover:text-gray-700" />
+                </button>
+              </div>
+
+              <div className="bg-gray-50 rounded-lg p-4 space-y-2 text-sm">
+                <p><span className="text-gray-500">Teacher:</span> <strong>{viewing.first_name} {viewing.last_name}</strong> <span className="text-gray-400 font-mono text-xs">({viewing.staff_id})</span></p>
+                <p><span className="text-gray-500">From:</span> <strong>{viewing.current_district}, {viewing.current_region}</strong></p>
+                <p><span className="text-gray-500">To:</span> <strong>{viewing.requested_district}, {viewing.requested_region}</strong></p>
+                <p><span className="text-gray-500">Reason:</span> {viewing.reason}</p>
+                <p><span className="text-gray-500">Submitted:</span> {new Date(viewing.created_at).toLocaleDateString()}</p>
+              </div>
+
+              <div className="mt-4 pt-4 border-t space-y-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-500">Decision:</span>
+                  <Badge status={viewing.status} />
+                </div>
+                {viewing.reviewed_by_email && (
+                  <p><span className="text-gray-500">Reviewed by:</span> {viewing.reviewed_by_email}</p>
+                )}
+                {viewing.reviewed_at && (
+                  <p><span className="text-gray-500">Reviewed on:</span> {new Date(viewing.reviewed_at).toLocaleDateString()}</p>
+                )}
+                {viewing.hr_notes && (
+                  <p><span className="text-gray-500">HR Notes:</span> {viewing.hr_notes}</p>
+                )}
+              </div>
+
+              <div className="flex justify-end pt-5">
+                <button
+                  onClick={() => setViewing(null)}
+                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-5 py-2 rounded-lg text-sm transition"
+                >
+                  Close
+                </button>
               </div>
             </div>
           </div>

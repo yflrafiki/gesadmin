@@ -3,7 +3,7 @@ import toast from 'react-hot-toast';
 
 const rawApiUrl = import.meta.env.VITE_API_URL?.replace(/\/+$/, '');
 const defaultApiUrl = import.meta.env.PROD ? 'https://ges-backend-mhro.onrender.com' : '';
-const API_URL = rawApiUrl || defaultApiUrl;
+export const API_URL = rawApiUrl || defaultApiUrl;
 
 if (!rawApiUrl && import.meta.env.PROD) {
   console.warn('VITE_API_URL is not set. Falling back to default production API URL.');

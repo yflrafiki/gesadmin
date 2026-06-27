@@ -3,7 +3,7 @@ import { getAllTeachers, deleteTeacher } from '../../api/teachers';
 import Layout from '../../components/layout/Layout';
 import Spinner from '../../components/common/Spinner';
 import toast from 'react-hot-toast';
-import { Search, Eye, X, User, Edit3, Trash2 } from 'lucide-react';
+import { Search, Eye, X, User, Edit3, Trash2, AlertTriangle } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { UserPlus } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -20,6 +20,7 @@ const Teachers = () => {
   const [qualification, setQualification] = useState('');
   const [selected, setSelected] = useState<any | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<any | null>(null);
 
   const basePath = location.pathname.startsWith('/admin') ? '/admin' : '/hr';
   const apiUrl = import.meta.env.VITE_API_URL?.replace(/\/+$/, '') || 'http://localhost:5000';
@@ -44,14 +45,14 @@ const Teachers = () => {
 
   useEffect(() => { fetchTeachers(); }, [search, region, qualification]);
 
-  const handleDelete = async (t: any) => {
-    if (!window.confirm(`Permanently delete ${t.first_name} ${t.last_name} (${t.staff_id})? This cannot be undone.`)) {
-      return;
-    }
+  const handleConfirmDelete = async () => {
+    if (!confirmDelete) return;
+    const t = confirmDelete;
     setDeletingId(t.id);
     try {
       await deleteTeacher(t.id);
       toast.success('Teacher record deleted');
+      setConfirmDelete(null);
       fetchTeachers();
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Failed to delete teacher');
@@ -243,7 +244,7 @@ const Teachers = () => {
                         </button>
                         {isAdmin && (
                           <button
-                            onClick={() => handleDelete(t)}
+                            onClick={() => setConfirmDelete(t)}
                             disabled={deletingId === t.id}
                             className="flex items-center gap-1 text-xs bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded-lg transition disabled:opacity-50"
                           >
@@ -381,6 +382,42 @@ const Teachers = () => {
                 </button>
               </div>
 
+            </div>
+          </div>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {confirmDelete && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="bg-red-100 rounded-full p-2 shrink-0">
+                  <AlertTriangle size={20} className="text-red-600" />
+                </div>
+                <h3 className="font-bold text-gray-800">Delete Teacher Record</h3>
+              </div>
+              <p className="text-sm text-gray-600 mb-6">
+                Permanently delete <strong>{confirmDelete.title} {confirmDelete.first_name} {confirmDelete.last_name}</strong>{' '}
+                ({confirmDelete.staff_id})? This removes their account, documents, credentials and
+                application history. <strong>This cannot be undone.</strong>
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setConfirmDelete(null)}
+                  disabled={deletingId === confirmDelete.id}
+                  className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-lg text-sm transition disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmDelete}
+                  disabled={deletingId === confirmDelete.id}
+                  className="flex-1 flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-lg text-sm transition disabled:opacity-50"
+                >
+                  <Trash2 size={14} />
+                  {deletingId === confirmDelete.id ? 'Deleting...' : 'Delete Permanently'}
+                </button>
+              </div>
             </div>
           </div>
         )}

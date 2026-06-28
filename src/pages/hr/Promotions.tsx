@@ -94,8 +94,14 @@ const Promotions = () => {
                   </p>
                   <p className="text-sm text-gray-500 italic">{app.reason}</p>
                   <p className="text-xs text-gray-400">
-                    {new Date(app.created_at).toLocaleDateString()}
+                    Submitted: {new Date(app.created_at).toLocaleString()}
                   </p>
+                  {app.reviewed_at && (
+                    <p className="text-xs text-gray-400">
+                      {app.status === 'approved' ? 'Approved' : app.status === 'rejected' ? 'Rejected' : 'Reviewed'}: {new Date(app.reviewed_at).toLocaleString()}
+                      {app.reviewed_by_email ? ` by ${app.reviewed_by_email}` : ''}
+                    </p>
+                  )}
                 </div>
                 {app.status === 'pending' && (
                   <button

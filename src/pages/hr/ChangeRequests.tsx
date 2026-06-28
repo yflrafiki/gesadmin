@@ -88,7 +88,7 @@ const ChangeRequests = () => {
             <table className="w-full text-sm">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  {['Teacher', 'Field', 'Current → Requested', 'Document', 'Status', 'Actions'].map(h => (
+                  {['Teacher', 'Field', 'Current → Requested', 'Document', 'Submitted', 'Status', 'Actions'].map(h => (
                     <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">{h}</th>
                   ))}
                 </tr>
@@ -113,6 +113,9 @@ const ChangeRequests = () => {
                             <FileText size={12} /> attached
                           </span>
                         ) : '—'}
+                      </td>
+                      <td className="px-4 py-3 text-gray-400 text-xs">
+                        {new Date(r.created_at).toLocaleString()}
                       </td>
                       <td className="px-4 py-3">
                         <span className={`px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1 w-fit ${
@@ -207,6 +210,19 @@ const ChangeRequests = () => {
                     <p className="text-sm text-gray-700">{selected.hr_notes}</p>
                   </div>
                 )}
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs text-gray-400 mb-0.5">Submitted</p>
+                    <p className="text-sm text-gray-700">{new Date(selected.created_at).toLocaleString()}</p>
+                  </div>
+                  {selected.reviewed_at && (
+                    <div>
+                      <p className="text-xs text-gray-400 mb-0.5">{selected.status === 'approved' ? 'Approved' : 'Rejected'}</p>
+                      <p className="text-sm text-gray-700">{new Date(selected.reviewed_at).toLocaleString()}</p>
+                    </div>
+                  )}
+                </div>
 
                 {selected.status === 'pending' && (
                   <div>

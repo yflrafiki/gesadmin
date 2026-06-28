@@ -29,6 +29,7 @@ const adminLinks = [
   { to: '/admin/promotions', icon: TrendingUp, label: 'Promotions' },
   { to: '/admin/change-requests', icon: ClipboardEdit, label: 'Change Requests' },
   { to: '/admin/exams', icon: BookOpen, label: 'Examinations' },
+  { to: '/admin/promotion-documents', icon: FileText, label: 'Promo Documents' },
   { to: '/admin/reports', icon: BarChart3, label: 'Reports' },
   { to: '/admin/audit', icon: FileText, label: 'Audit Logs' },
   { to: '/admin/verified-teachers', icon: ShieldCheck, label: 'Verified Teachers' },

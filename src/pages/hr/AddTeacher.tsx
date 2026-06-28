@@ -100,58 +100,70 @@ const Field = ({
   </div>
 );
 
+const INITIAL_FORM: Record<string, any> = {
+  email: '',
+  password: 'password123',
+  full_name: '',
+  role: 'teacher',
+  staff_id: '',
+  first_name: '',
+  last_name: '',
+  date_of_birth: '',
+  title: '',
+  phone: '',
+  gender: '',
+  marital_status: '',
+  nationality: 'Ghanaian',
+  hometown: '',
+  residential_address: '',
+  house_number: '',
+  ghana_card_number: '',
+  ghana_card_issue_date: '',
+  ghana_card_expiry_date: '',
+  ntc_license_number: '',
+  nss_number: '',
+  nss_certificate: null,
+  ssnit_number: '',
+  institution_attended: '',
+  graduation_date: '',
+  major_minor_courses: '',
+  student_index_number: '',
+  degree_certificate: null,
+  subject_specialization: '',
+  qualification: '',
+  current_grade: '',
+  years_of_service: 0,
+  national_date_of_present_rank: '',
+  years_in_current_rank: 0,
+  current_school: '',
+  current_district: '',
+  current_region: '',
+  date_of_first_appointment: '',
+  date_of_confirmation: '',
+  date_of_current_posting: '',
+  employment_status: 'active',
+  appointment_letter: null,
+  disability_status: false,
+  disability_type: '',
+  region: '',
+  district: '',
+};
+
 const AddTeacher = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
-  const [form, setForm] = useState<Record<string, any>>({
-    email: '',
-    password: 'password123',
-    full_name: '',
-    role: 'teacher',
-    staff_id: '',
-    first_name: '',
-    last_name: '',
-    date_of_birth: '',
-    title: '',
-    phone: '',
-    gender: '',
-    marital_status: '',
-    nationality: 'Ghanaian',
-    hometown: '',
-    residential_address: '',
-    house_number: '',
-    ghana_card_number: '',
-    ghana_card_issue_date: '',
-    ghana_card_expiry_date: '',
-    ntc_license_number: '',
-    nss_number: '',
-    nss_certificate: null,
-    ssnit_number: '',
-    institution_attended: '',
-    graduation_date: '',
-    major_minor_courses: '',
-    student_index_number: '',
-    degree_certificate: null,
-    subject_specialization: '',
-    qualification: '',
-    current_grade: '',
-    years_of_service: 0,
-    national_date_of_present_rank: '',
-    years_in_current_rank: 0,
-    current_school: '',
-    current_district: '',
-    current_region: '',
-    date_of_first_appointment: '',
-    date_of_confirmation: '',
-    date_of_current_posting: '',
-    employment_status: 'active',
-    appointment_letter: null,
-    disability_status: false,
-    disability_type: '',
-    region: '',
-    district: '',
-  });
+  const [form, setForm] = useState<Record<string, any>>(INITIAL_FORM);
+  // The role picker starts locked (it defaults to "teacher") — an admin has
+  // to explicitly use "Change role" to switch what kind of account they're
+  // creating, rather than risk silently flipping roles mid-form.
+  const [roleLocked, setRoleLocked] = useState(true);
+
+  const changeRole = () => {
+    setForm(INITIAL_FORM);
+    setCurrentStep(0);
+    setRoleLocked(false);
+  };
 
   // ✅ Stable update function
   const update = (field: string, value: any) =>
@@ -439,10 +451,35 @@ const AddTeacher = () => {
           </div>
         </div>
 
-        {/* Role selector */}
+        {/* Role selector — locked to the current selection once chosen, so
+            switching mid-form can't silently mix up data for a different
+            role. "Change role" explicitly resets the form first. */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-          <Field label="Account Role" field="role" value={form.role}
-            onChange={update} type="select" options={ROLES} required />
+          <div className="flex items-center justify-between mb-1.5">
+            <label className={labelClass.replace('mb-1.5', '')}>
+              Account Role <span className="text-red-500">*</span>
+            </label>
+            {roleLocked && (
+              <button
+                type="button"
+                onClick={changeRole}
+                className="text-xs font-medium text-blue-700 hover:underline"
+              >
+                Change role
+              </button>
+            )}
+          </div>
+          <select
+            value={form.role}
+            onChange={(e) => { update('role', e.target.value); setRoleLocked(true); }}
+            className={inputClass}
+          >
+            {ROLES.map((r) => (
+              <option key={r} value={r} disabled={roleLocked && r !== form.role}>
+                {r.replace(/_/g, ' ')}
+              </option>
+            ))}
+          </select>
         </div>
 
         {form.role !== 'teacher' ? (

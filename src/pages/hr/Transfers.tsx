@@ -5,7 +5,7 @@ import { TableSkeleton } from '../../components/common/Skeleton';
 import Badge from '../../components/common/Badge';
 import { type Application } from '../../types/index';
 import toast from 'react-hot-toast';
-import { ArrowLeftRight, CheckCircle, XCircle, Info, X, Eye } from 'lucide-react';
+import { ArrowLeftRight, CheckCircle, XCircle, X, Eye } from 'lucide-react';
 import { useNotificationStream } from '../../hooks/useNotificationStream';
 
 const FILTERS = [
@@ -13,7 +13,6 @@ const FILTERS = [
   { value: 'pending', label: 'Pending' },
   { value: 'approved', label: 'Approved' },
   { value: 'rejected', label: 'Rejected' },
-  { value: 'more_info', label: 'More Info' },
 ];
 
 const Transfers = () => {
@@ -116,10 +115,15 @@ const Transfers = () => {
                     To: <strong>{app.requested_district}, {app.requested_region}</strong>
                   </p>
                   <p className="text-xs text-gray-400">
-                    {new Date(app.created_at).toLocaleDateString()}
+                    Submitted: {new Date(app.created_at).toLocaleString()}
                   </p>
+                  {app.reviewed_at && (
+                    <p className="text-xs text-gray-400">
+                      {app.status === 'approved' ? 'Approved' : 'Rejected'}: {new Date(app.reviewed_at).toLocaleString()}
+                    </p>
+                  )}
                 </div>
-                {app.status === 'pending' || app.status === 'more_info' ? (
+                {app.status === 'pending' ? (
                   <button
                     onClick={() => setSelected(app)}
                     className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-lg text-sm transition w-fit shrink-0"
@@ -165,11 +169,10 @@ const Transfers = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Decision
                   </label>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {[
                       { value: 'approved', label: 'Approve', icon: CheckCircle, color: 'border-green-500 bg-green-50 text-green-700' },
                       { value: 'rejected', label: 'Reject', icon: XCircle, color: 'border-red-500 bg-red-50 text-red-700' },
-                      { value: 'more_info', label: 'More Info', icon: Info, color: 'border-blue-500 bg-blue-50 text-blue-700' },
                     ].map(({ value, label, icon: Icon, color }) => (
                       <button
                         key={value}
@@ -234,7 +237,7 @@ const Transfers = () => {
                 <p><span className="text-gray-500">From:</span> <strong>{viewing.current_district}, {viewing.current_region}</strong></p>
                 <p><span className="text-gray-500">To:</span> <strong>{viewing.requested_district}, {viewing.requested_region}</strong></p>
                 <p><span className="text-gray-500">Reason:</span> {viewing.reason}</p>
-                <p><span className="text-gray-500">Submitted:</span> {new Date(viewing.created_at).toLocaleDateString()}</p>
+                <p><span className="text-gray-500">Submitted:</span> {new Date(viewing.created_at).toLocaleString()}</p>
               </div>
 
               <div className="mt-4 pt-4 border-t space-y-2 text-sm">
@@ -246,7 +249,7 @@ const Transfers = () => {
                   <p><span className="text-gray-500">Reviewed by:</span> {viewing.reviewed_by_email}</p>
                 )}
                 {viewing.reviewed_at && (
-                  <p><span className="text-gray-500">Reviewed on:</span> {new Date(viewing.reviewed_at).toLocaleDateString()}</p>
+                  <p><span className="text-gray-500">Reviewed on:</span> {new Date(viewing.reviewed_at).toLocaleString()}</p>
                 )}
                 {viewing.hr_notes && (
                   <p><span className="text-gray-500">HR Notes:</span> {viewing.hr_notes}</p>

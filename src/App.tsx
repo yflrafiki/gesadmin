@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import VerifyEmailCode from './pages/VerifyEmailCode';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import HRDashboard from './pages/hr/Dashboard';
 import HRTeachers from './pages/hr/Teachers';
 import HRTransfers from './pages/hr/Transfers';
@@ -43,6 +45,8 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/verify-email-code" element={<VerifyEmailCode />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* HR Routes */}
         <Route path="/hr/dashboard" element={<ProtectedRoute roles={['hr_officer']}><HRDashboard /></ProtectedRoute>} />
@@ -68,6 +72,7 @@ function App() {
         <Route path="/admin/hr-officers" element={<ProtectedRoute roles={['admin']}><HrOfficers /></ProtectedRoute>} />
         <Route path="/admin/change-requests" element={<ProtectedRoute roles={['admin']}><ChangeRequests /></ProtectedRoute>} />
         <Route path="/admin/change-password" element={<ProtectedRoute roles={['admin']}><ChangePassword /></ProtectedRoute>} />
+        <Route path="/admin/promotion-documents" element={<ProtectedRoute roles={['admin']}><PromotionDocuments /></ProtectedRoute>} />
         <Route path="/admin/teachers/add" element={<ProtectedRoute roles={['admin']}><AddTeacher /></ProtectedRoute>} />
         <Route path="/admin/teachers/:id/edit" element={<ProtectedRoute roles={['admin']}><EditTeacher /></ProtectedRoute>} />
         {/* Examiner Routes */}

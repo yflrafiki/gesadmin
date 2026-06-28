@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getAuditLog } from '../../api/reports';
 import Layout from '../../components/layout/Layout';
-import Spinner from '../../components/common/Spinner';
+import { TableSkeleton } from '../../components/common/Skeleton';
 import toast from 'react-hot-toast';
 import { FileText, Search } from 'lucide-react';
 
@@ -42,7 +42,7 @@ const AuditLog = () => {
     log.details?.toLowerCase().includes(search.toLowerCase())
   );
 
-  if (loading) return <Layout><Spinner /></Layout>;
+  if (loading) return <Layout><TableSkeleton /></Layout>;
 
   return (
     <Layout>

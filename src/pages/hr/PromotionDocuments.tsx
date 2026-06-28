@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getPromotionDocuments, reviewPromotionDocument } from '../../api/promotions';
 import Layout from '../../components/layout/Layout';
-import Spinner from '../../components/common/Spinner';
+import { TableSkeleton } from '../../components/common/Skeleton';
 import toast from 'react-hot-toast';
 import {
   CheckCircle, XCircle, AlertTriangle, Eye, X,
@@ -61,7 +61,7 @@ const PromotionDocuments = () => {
     return true;
   });
 
-  if (loading) return <Layout><Spinner /></Layout>;
+  if (loading) return <Layout><TableSkeleton /></Layout>;
 
   const autoApproved = documents.filter(d => d.hr_decision === 'approved' && !d.hr_reviewed).length;
   const needsReview = documents.filter(d => d.hr_decision === 'manual_review' && !d.hr_reviewed).length;

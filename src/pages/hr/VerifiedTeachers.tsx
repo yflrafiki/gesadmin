@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getVerifiedTeachers } from '../../api/credentials';
 import Layout from '../../components/layout/Layout';
-import Spinner from '../../components/common/Spinner';
+import { TableSkeleton } from '../../components/common/Skeleton';
 import toast from 'react-hot-toast';
 import { ShieldCheck, Search, FileText, Hash } from 'lucide-react';
 
@@ -50,7 +50,7 @@ const VerifiedTeachers = () => {
     );
   });
 
-  if (loading) return <Layout><Spinner /></Layout>;
+  if (loading) return <Layout><TableSkeleton /></Layout>;
 
   return (
     <Layout>

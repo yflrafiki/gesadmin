@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Layout from '../../components/layout/Layout';
-import Spinner from '../../components/common/Spinner';
+import { FormSkeleton } from '../../components/common/Skeleton';
 import toast from 'react-hot-toast';
 import { getTeacherById, updateTeacher } from '../../api/teachers';
 import type { Teacher } from '../../types';
@@ -199,7 +199,7 @@ const EditTeacher = () => {
     }
   };
 
-  if (loading) return <Layout><Spinner /></Layout>;
+  if (loading) return <Layout><FormSkeleton /></Layout>;
   if (!teacher) {
     return (
       <Layout>

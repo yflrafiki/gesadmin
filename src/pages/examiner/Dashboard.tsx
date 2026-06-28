@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getAllExams } from '../../api/exams';
 import Layout from '../../components/layout/Layout';
-import Spinner from '../../components/common/Spinner';
+import { DashboardSkeleton } from '../../components/common/Skeleton';
 import { BookOpen, Send, Lock, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -23,7 +23,7 @@ const ExaminerDashboard = () => {
     fetch();
   }, []);
 
-  if (loading) return <Layout><Spinner /></Layout>;
+  if (loading) return <Layout><DashboardSkeleton /></Layout>;
 
   const draft = exams.filter(e => e.status === 'draft').length;
   const published = exams.filter(e => e.status === 'published').length;

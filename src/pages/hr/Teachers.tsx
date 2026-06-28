@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getAllTeachers, deleteTeacher } from '../../api/teachers';
 import Layout from '../../components/layout/Layout';
-import Spinner from '../../components/common/Spinner';
+import { TableSkeleton } from '../../components/common/Skeleton';
 import toast from 'react-hot-toast';
 import { Search, Eye, X, User, Edit3, Trash2, AlertTriangle } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -84,7 +84,7 @@ const Teachers = () => {
     </div>
   );
 
-  if (loading) return <Layout><Spinner /></Layout>;
+  if (loading) return <Layout><TableSkeleton /></Layout>;
 
   return (
     <Layout>

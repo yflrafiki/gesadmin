@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getDashboardSummary } from '../../api/reports';
 import Layout from '../../components/layout/Layout';
-import Spinner from '../../components/common/Spinner';
+import { DashboardSkeleton } from '../../components/common/Skeleton';
 import { useAuth } from '../../context/AuthContext';
 import { type DashboardSummary } from '../../types/index';
 import { Users, ArrowLeftRight, TrendingUp, Shield, Clock, UserCog } from 'lucide-react';
@@ -45,7 +45,7 @@ const HRDashboard = () => {
     fetch();
   }, []);
 
-  if (loading) return <Layout><Spinner /></Layout>;
+  if (loading) return <Layout><DashboardSkeleton /></Layout>;
 
   const pendingTransfers = data?.transfers.find(t => t.status === 'pending')?.count || 0;
   const pendingPromotions = data?.promotions.find(p => p.status === 'pending')?.count || 0;

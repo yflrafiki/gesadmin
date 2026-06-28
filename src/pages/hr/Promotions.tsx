@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getAllPromotions, reviewPromotion } from '../../api/promotions';
 import Layout from '../../components/layout/Layout';
-import Spinner from '../../components/common/Spinner';
+import { TableSkeleton } from '../../components/common/Skeleton';
 import Badge from '../../components/common/Badge';
 import { type Application } from '../../types/index';
 import toast from 'react-hot-toast';
@@ -44,7 +44,7 @@ const Promotions = () => {
     }
   };
 
-  if (loading) return <Layout><Spinner /></Layout>;
+  if (loading) return <Layout><TableSkeleton /></Layout>;
 
   return (
     <Layout>

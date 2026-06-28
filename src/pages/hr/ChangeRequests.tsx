@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getAllChangeRequests, reviewChangeRequest, getChangeRequestDocument } from '../../api/changeRequests';
 import Layout from '../../components/layout/Layout';
-import Spinner from '../../components/common/Spinner';
+import { TableSkeleton } from '../../components/common/Skeleton';
 import toast from 'react-hot-toast';
 import { Check, X, Clock, Eye, FileText } from 'lucide-react';
 import type { ChangeRequest } from '../../types';
@@ -61,7 +61,7 @@ const ChangeRequests = () => {
     }
   };
 
-  if (loading) return <Layout><Spinner /></Layout>;
+  if (loading) return <Layout><TableSkeleton /></Layout>;
 
   return (
     <Layout>

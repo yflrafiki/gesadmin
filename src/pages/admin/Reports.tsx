@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getDashboardSummary, getTransferReport, getPromotionReport } from '../../api/reports';
 import Layout from '../../components/layout/Layout';
-import Spinner from '../../components/common/Spinner';
+import { DashboardSkeleton } from '../../components/common/Skeleton';
 import Badge from '../../components/common/Badge';
 import toast from 'react-hot-toast';
 import { ArrowLeftRight, TrendingUp } from 'lucide-react';
@@ -33,7 +33,7 @@ const Reports = () => {
     fetch();
   }, []);
 
-  if (loading) return <Layout><Spinner /></Layout>;
+  if (loading) return <Layout><DashboardSkeleton /></Layout>;
 
   return (
     <Layout>

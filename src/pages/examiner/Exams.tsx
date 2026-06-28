@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { createExam, getAllExams, publishExam, closeExam, getExamResults } from '../../api/exams';
 import Layout from '../../components/layout/Layout';
-import Spinner from '../../components/common/Spinner';
+import { TableSkeleton } from '../../components/common/Skeleton';
 import Badge from '../../components/common/Badge';
 import toast from 'react-hot-toast';
 import { Plus, X, Trash2, Send, Lock, BookOpen, Eye, CheckCircle, XCircle } from 'lucide-react';
@@ -130,7 +130,7 @@ const ExaminerExams = () => {
     }
   };
 
-  if (loading) return <Layout><Spinner /></Layout>;
+  if (loading) return <Layout><TableSkeleton /></Layout>;
 
   return (
     <Layout>

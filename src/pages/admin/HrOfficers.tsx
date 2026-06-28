@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getUsersByRole } from '../../api/auth';
 import Layout from '../../components/layout/Layout';
-import Spinner from '../../components/common/Spinner';
+import { TableSkeleton } from '../../components/common/Skeleton';
 import toast from 'react-hot-toast';
 import { UserCog, Search, X } from 'lucide-react';
 import { REGIONS } from '../../constants/teacherOptions';
@@ -36,7 +36,7 @@ const HrOfficers = () => {
 
   const filtered = users.filter((u) => u.email.toLowerCase().includes(search.toLowerCase()));
 
-  if (loading) return <Layout><Spinner /></Layout>;
+  if (loading) return <Layout><TableSkeleton /></Layout>;
 
   return (
     <Layout>

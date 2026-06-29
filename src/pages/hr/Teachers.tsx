@@ -343,7 +343,7 @@ const Teachers = () => {
                   <InfoField label="Current Grade / Rank" value={selected.current_grade} />
                   <InfoField label="Years of Service" value={selected.years_of_service} />
                   <InfoField label="National Date of Present Rank" value={formatDate(selected.national_date_of_present_rank)} />
-                  <InfoField label="Years in Current Rank" value={selected.years_in_current_rank} />
+                  <InfoField label="Years in Current Rank (auto-calculated)" value={selected.years_in_current_rank} />
                 </Section>
 
                 {/* Employment Details */}

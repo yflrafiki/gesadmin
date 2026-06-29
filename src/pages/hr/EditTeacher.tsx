@@ -92,7 +92,6 @@ const EditTeacher = () => {
     current_grade: '',
     years_of_service: 0,
     national_date_of_present_rank: '',
-    years_in_current_rank: 0,
     current_school: '',
     current_district: '',
     current_region: '',
@@ -121,7 +120,6 @@ const EditTeacher = () => {
           current_grade: teacherData.current_grade ?? '',
           years_of_service: teacherData.years_of_service ?? 0,
           national_date_of_present_rank: teacherData.national_date_of_present_rank ?? '',
-          years_in_current_rank: teacherData.years_in_current_rank ?? 0,
           current_school: teacherData.current_school ?? '',
           current_district: teacherData.current_district ?? '',
           current_region: teacherData.current_region ?? '',
@@ -176,9 +174,6 @@ const EditTeacher = () => {
 
     if (form.years_of_service !== undefined && form.years_of_service !== '') {
       payload.years_of_service = Number(form.years_of_service);
-    }
-    if (form.years_in_current_rank !== undefined && form.years_in_current_rank !== '') {
-      payload.years_in_current_rank = Number(form.years_in_current_rank);
     }
 
     return payload;
@@ -236,8 +231,12 @@ const EditTeacher = () => {
             <Field label="Qualification" field="qualification" value={form.qualification} onChange={update} type="select" options={QUALIFICATIONS} />
             <Field label="Current Grade / Rank" field="current_grade" value={form.current_grade} onChange={update} type="select" options={GRADES} />
             <Field label="Years of Service" field="years_of_service" value={form.years_of_service} onChange={update} type="number" />
-            <Field label="National Date of Present Rank" field="national_date_of_present_rank" value={form.national_date_of_present_rank} onChange={update} type="date" />
-            <Field label="Years in Current Rank" field="years_in_current_rank" value={form.years_in_current_rank} onChange={update} type="number" />
+            <div>
+              <Field label="National Date of Present Rank" field="national_date_of_present_rank" value={form.national_date_of_present_rank} onChange={update} type="date" />
+              <p className="text-xs text-gray-400 mt-1">
+                Years in current rank: <strong>{teacher?.years_in_current_rank ?? '—'}</strong> (calculated automatically from this date)
+              </p>
+            </div>
             <Field label="Current School" field="current_school" value={form.current_school} onChange={update} placeholder="e.g. Tarkwa Senior High School" />
             <Field label="Current District" field="current_district" value={form.current_district} onChange={update} placeholder="e.g. Tarkwa-Nsuaem" />
             <Field label="Current Region" field="current_region" value={form.current_region} onChange={update} type="select" options={REGIONS} />

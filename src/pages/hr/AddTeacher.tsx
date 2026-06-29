@@ -161,7 +161,6 @@ const INITIAL_FORM: Record<string, any> = {
   current_grade: '',
   years_of_service: 0,
   national_date_of_present_rank: '',
-  years_in_current_rank: 0,
   current_school: '',
   current_district: '',
   current_region: '',
@@ -428,10 +427,13 @@ const AddTeacher = () => {
               onChange={update} type="select" options={GRADES} required />
             <Field label="Years of Service" field="years_of_service"
               value={form.years_of_service} onChange={update} type="number" />
-            <Field label="National Date of Present Rank" field="national_date_of_present_rank"
-              value={form.national_date_of_present_rank} onChange={update} type="date" required />
-            <Field label="Years in Current Rank" field="years_in_current_rank"
-              value={form.years_in_current_rank} onChange={update} type="number" />
+            <div>
+              <Field label="National Date of Present Rank" field="national_date_of_present_rank"
+                value={form.national_date_of_present_rank} onChange={update} type="date" required />
+              <p className="text-xs text-gray-400 mt-1">
+                Years in current rank is calculated automatically from this date — it's what determines when the teacher becomes due for promotion.
+              </p>
+            </div>
           </div>
         );
 

@@ -95,7 +95,7 @@ const ChangeRequests = () => {
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {requests.length === 0 ? (
-                  <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-400">No change requests found</td></tr>
+                  <tr><td colSpan={7} className="px-4 py-8 text-center text-gray-400">No change requests found</td></tr>
                 ) : (
                   requests.map((r) => (
                     <tr key={r.id} className="hover:bg-gray-50 transition">
@@ -104,8 +104,9 @@ const ChangeRequests = () => {
                         <p className="text-xs text-gray-400 font-mono">{r.staff_id}</p>
                       </td>
                       <td className="px-4 py-3 capitalize">{r.field_name.replace(/_/g, ' ')}</td>
-                      <td className="px-4 py-3 text-gray-600 max-w-[220px] truncate">
-                        "{r.current_value || '—'}" → "{r.requested_value}"
+                      <td className="px-4 py-3 text-gray-600 max-w-[240px]">
+                        <p className="truncate"><span className="text-gray-400">From:</span> {r.current_value || '—'}</p>
+                        <p className="truncate"><span className="text-gray-400">To:</span> <strong className="font-medium text-gray-800">{r.requested_value}</strong></p>
                       </td>
                       <td className="px-4 py-3">
                         {r.document_name ? (

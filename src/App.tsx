@@ -22,6 +22,7 @@ import AddTeacher from './pages/hr/AddTeacher';
 import ChangeRequests from './pages/hr/ChangeRequests';
 import VerifiedTeachers from './pages/hr/VerifiedTeachers';
 import HrOfficers from './pages/admin/HrOfficers';
+import Examiners from './pages/admin/Examiners';
 
 const ProtectedRoute = ({
   children, roles,
@@ -51,6 +52,7 @@ function App() {
         {/* HR Routes */}
         <Route path="/hr/dashboard" element={<ProtectedRoute roles={['hr_officer']}><HRDashboard /></ProtectedRoute>} />
         <Route path="/hr/teachers" element={<ProtectedRoute roles={['hr_officer']}><HRTeachers /></ProtectedRoute>} />
+        <Route path="/hr/teachers/add" element={<ProtectedRoute roles={['hr_officer']}><AddTeacher /></ProtectedRoute>} />
         <Route path="/hr/transfers" element={<ProtectedRoute roles={['hr_officer']}><HRTransfers /></ProtectedRoute>} />
         <Route path="/hr/promotions" element={<ProtectedRoute roles={['hr_officer']}><HRPromotions /></ProtectedRoute>} />
         <Route path="/hr/exams" element={<ProtectedRoute roles={['hr_officer']}><HRExams /></ProtectedRoute>} />
@@ -70,6 +72,9 @@ function App() {
         <Route path="/admin/exams" element={<ProtectedRoute roles={['admin']}><HRExams /></ProtectedRoute>} />
         <Route path="/admin/verified-teachers" element={<ProtectedRoute roles={['admin']}><VerifiedTeachers /></ProtectedRoute>} />
         <Route path="/admin/hr-officers" element={<ProtectedRoute roles={['admin']}><HrOfficers /></ProtectedRoute>} />
+        <Route path="/admin/hr-officers/add" element={<ProtectedRoute roles={['admin']}><AddTeacher /></ProtectedRoute>} />
+        <Route path="/admin/examiners" element={<ProtectedRoute roles={['admin']}><Examiners /></ProtectedRoute>} />
+        <Route path="/admin/examiners/add" element={<ProtectedRoute roles={['admin']}><AddTeacher /></ProtectedRoute>} />
         <Route path="/admin/change-requests" element={<ProtectedRoute roles={['admin']}><ChangeRequests /></ProtectedRoute>} />
         <Route path="/admin/change-password" element={<ProtectedRoute roles={['admin']}><ChangePassword /></ProtectedRoute>} />
         <Route path="/admin/promotion-documents" element={<ProtectedRoute roles={['admin']}><PromotionDocuments /></ProtectedRoute>} />

@@ -105,15 +105,13 @@ const Teachers = () => {
               </span>
             )}
           </div>
-          {isAdmin && (
-            <button
-              onClick={() => navigate('/admin/teachers/add')}
-              className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-lg text-sm transition w-fit"
-            >
-              <UserPlus size={16} />
-              Add Teacher
-            </button>
-          )}
+          <button
+            onClick={() => navigate(`${basePath}/teachers/add`, { state: { role: 'teacher' } })}
+            className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-lg text-sm transition w-fit"
+          >
+            <UserPlus size={16} />
+            Add Teacher
+          </button>
         </div>
 
         {/* Search & Filters */}

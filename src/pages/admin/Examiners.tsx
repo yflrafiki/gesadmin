@@ -4,37 +4,33 @@ import { getUsersByRole } from '../../api/auth';
 import Layout from '../../components/layout/Layout';
 import { TableSkeleton } from '../../components/common/Skeleton';
 import toast from 'react-hot-toast';
-import { UserCog, Search, X, UserPlus } from 'lucide-react';
-import { REGIONS } from '../../constants/teacherOptions';
+import { ClipboardCheck, Search, X, UserPlus } from 'lucide-react';
 
-interface HrUser {
+interface ExaminerUser {
   id: string;
   email: string;
   role: string;
-  region: string | null;
-  district: string | null;
   created_at: string;
 }
 
-const HrOfficers = () => {
+const Examiners = () => {
   const navigate = useNavigate();
-  const [users, setUsers] = useState<HrUser[]>([]);
+  const [users, setUsers] = useState<ExaminerUser[]>([]);
   const [loading, setLoading] = useState(true);
-  const [region, setRegion] = useState('');
   const [search, setSearch] = useState('');
 
   const fetchUsers = async () => {
     try {
-      const res = await getUsersByRole({ role: 'hr_officer', region: region || undefined });
+      const res = await getUsersByRole({ role: 'examiner' });
       setUsers(res.data.users);
     } catch (err) {
-      toast.error('Failed to load HR officers');
+      toast.error('Failed to load examiners');
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => { fetchUsers(); }, [region]);
+  useEffect(() => { fetchUsers(); }, []);
 
   const filtered = users.filter((u) => u.email.toLowerCase().includes(search.toLowerCase()));
 
@@ -47,21 +43,21 @@ const HrOfficers = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h2 className="text-xl md:text-2xl font-bold text-gray-800">HR Officers</h2>
+            <h2 className="text-xl md:text-2xl font-bold text-gray-800">Examiners</h2>
             <p className="text-gray-500 text-sm">
-              All HR officer accounts — {users.length} total{region ? ` in ${region}` : ''}
+              All examiner accounts — {users.length} total
             </p>
           </div>
           <button
-            onClick={() => navigate('/admin/hr-officers/add')}
+            onClick={() => navigate('/admin/examiners/add')}
             className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-lg text-sm transition w-fit"
           >
             <UserPlus size={16} />
-            Add HR Officer
+            Add Examiner
           </button>
         </div>
 
-        {/* Search & Filters */}
+        {/* Search */}
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1 max-w-md">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -74,24 +70,13 @@ const HrOfficers = () => {
             />
           </div>
 
-          <select
-            value={region}
-            onChange={(e) => setRegion(e.target.value)}
-            className="border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white"
-          >
-            <option value="">All Regions</option>
-            {REGIONS.map((r) => (
-              <option key={r} value={r}>{r}</option>
-            ))}
-          </select>
-
-          {(search || region) && (
+          {search && (
             <button
-              onClick={() => { setSearch(''); setRegion(''); }}
+              onClick={() => setSearch('')}
               className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 px-3 py-2.5"
             >
               <X size={14} />
-              Clear filters
+              Clear
             </button>
           )}
         </div>
@@ -99,11 +84,9 @@ const HrOfficers = () => {
         {/* List */}
         {filtered.length === 0 ? (
           <div className="bg-white rounded-xl shadow-sm p-10 text-center">
-            <UserCog size={40} className="text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-500 font-medium">No HR officers found</p>
-            <p className="text-gray-400 text-sm mt-1">
-              {region ? `No HR officers assigned to ${region}` : 'Click "Add HR Officer" to create one'}
-            </p>
+            <ClipboardCheck size={40} className="text-gray-300 mx-auto mb-3" />
+            <p className="text-gray-500 font-medium">No examiners found</p>
+            <p className="text-gray-400 text-sm mt-1">Click "Add Examiner" to create one</p>
           </div>
         ) : (
           <div className="bg-white rounded-xl shadow-sm overflow-hidden">
@@ -111,7 +94,7 @@ const HrOfficers = () => {
               <table className="w-full text-sm">
                 <thead className="bg-gray-50 border-b">
                   <tr>
-                    {['Email', 'Region', 'District', 'Created'].map((h) => (
+                    {['Email', 'Created'].map((h) => (
                       <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
                         {h}
                       </th>
@@ -122,8 +105,6 @@ const HrOfficers = () => {
                   {filtered.map((u) => (
                     <tr key={u.id} className="hover:bg-gray-50 transition">
                       <td className="px-4 py-3 font-medium text-gray-800">{u.email}</td>
-                      <td className="px-4 py-3 text-gray-500">{u.region || '—'}</td>
-                      <td className="px-4 py-3 text-gray-500">{u.district || '—'}</td>
                       <td className="px-4 py-3 text-gray-500">
                         {new Date(u.created_at).toLocaleDateString()}
                       </td>
@@ -139,4 +120,4 @@ const HrOfficers = () => {
   );
 };
 
-export default HrOfficers;
+export default Examiners;

@@ -5,13 +5,20 @@ import { TableSkeleton } from '../../components/common/Skeleton';
 import Badge from '../../components/common/Badge';
 import { type Application } from '../../types/index';
 import toast from 'react-hot-toast';
-import { TrendingUp, CheckCircle, XCircle, Info, X } from 'lucide-react';
+import { TrendingUp, CheckCircle, XCircle, Info, X, Eye } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 const Promotions = () => {
+  const { user } = useAuth();
+  // Approving/rejecting is an HR-only decision — admins get a read-only view
+  // of the same applications (who applied, who decided, and what they
+  // decided), enforced again server-side on the review endpoint itself.
+  const isAdmin = user?.role === 'admin';
   const [promotions, setPromotions] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('');
   const [selected, setSelected] = useState<Application | null>(null);
+  const [viewing, setViewing] = useState<Application | null>(null);
   const [reviewing, setReviewing] = useState(false);
   const [form, setForm] = useState({ status: '', hr_notes: '' });
 
@@ -103,7 +110,15 @@ const Promotions = () => {
                     </p>
                   )}
                 </div>
-                {app.status === 'pending' && (
+                {isAdmin ? (
+                  <button
+                    onClick={() => setViewing(app)}
+                    className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm transition w-fit shrink-0"
+                  >
+                    <Eye size={14} />
+                    View Details
+                  </button>
+                ) : app.status === 'pending' && (
                   <button
                     onClick={() => setSelected(app)}
                     className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-lg text-sm transition w-fit shrink-0"
@@ -184,6 +199,58 @@ const Promotions = () => {
                     {reviewing ? 'Submitting...' : 'Submit Decision'}
                   </button>
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* View Details Modal — admin's read-only counterpart to the Review
+            modal above. Same information, no decision controls. */}
+        {viewing && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6">
+              <div className="flex justify-between items-center mb-5">
+                <h3 className="font-bold text-gray-800">Promotion Application Details</h3>
+                <button onClick={() => setViewing(null)}>
+                  <X size={20} className="text-gray-500" />
+                </button>
+              </div>
+
+              <div className="bg-gray-50 rounded-lg p-4 space-y-2 text-sm">
+                <p><span className="text-gray-500">Teacher:</span> <strong>{viewing.first_name} {viewing.last_name}</strong> <span className="text-gray-400 font-mono text-xs">({viewing.staff_id})</span></p>
+                <p><span className="text-gray-500">Current Grade:</span> <strong>{viewing.current_grade}</strong></p>
+                <p><span className="text-gray-500">Years of Service:</span> <strong>{viewing.years_of_service}</strong></p>
+                <p><span className="text-gray-500">Qualification:</span> <strong>{viewing.qualification}</strong></p>
+                <p><span className="text-gray-500">Reason:</span> {viewing.reason || '—'}</p>
+                <p><span className="text-gray-500">Submitted:</span> {new Date(viewing.created_at).toLocaleString()}</p>
+              </div>
+
+              <div className="mt-4 pt-4 border-t space-y-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-500">Decision:</span>
+                  <Badge status={viewing.status} />
+                </div>
+                {viewing.reviewed_by_email && (
+                  <p><span className="text-gray-500">Reviewed by:</span> {viewing.reviewed_by_email}</p>
+                )}
+                {viewing.reviewed_at && (
+                  <p><span className="text-gray-500">Reviewed on:</span> {new Date(viewing.reviewed_at).toLocaleString()}</p>
+                )}
+                {viewing.hr_notes && (
+                  <p><span className="text-gray-500">HR Notes:</span> {viewing.hr_notes}</p>
+                )}
+                {viewing.status === 'pending' && (
+                  <p className="text-amber-600">Awaiting HR review.</p>
+                )}
+              </div>
+
+              <div className="flex justify-end pt-5">
+                <button
+                  onClick={() => setViewing(null)}
+                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-5 py-2 rounded-lg text-sm transition"
+                >
+                  Close
+                </button>
               </div>
             </div>
           </div>

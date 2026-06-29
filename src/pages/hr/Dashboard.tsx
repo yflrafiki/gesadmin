@@ -4,7 +4,7 @@ import Layout from '../../components/layout/Layout';
 import { DashboardSkeleton } from '../../components/common/Skeleton';
 import { useAuth } from '../../context/AuthContext';
 import { type DashboardSummary } from '../../types/index';
-import { Users, ArrowLeftRight, TrendingUp, Shield, Clock, UserCog } from 'lucide-react';
+import { Users, ArrowLeftRight, TrendingUp, Shield, Clock, UserCog, ClipboardCheck } from 'lucide-react';
 
 const StatCard = ({
   icon: Icon, label, value, color
@@ -79,6 +79,14 @@ const HRDashboard = () => {
               label="Total HR Officers"
               value={data?.summary.total_hr_officers || 0}
               color="bg-blue-500"
+            />
+          )}
+          {isAdmin && (
+            <StatCard
+              icon={ClipboardCheck}
+              label="Total Examiners"
+              value={data?.summary.total_examiners || 0}
+              color="bg-indigo-500"
             />
           )}
           <StatCard

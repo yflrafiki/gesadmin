@@ -1,12 +1,19 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Layout from '../../components/layout/Layout';
 import toast from 'react-hot-toast';
 import { registerAccount } from '../../api/auth';
 import { ChevronLeft, ChevronRight, UserPlus, Upload } from 'lucide-react';
-import { TITLES, QUALIFICATIONS, MARITAL_STATUSES, EMPLOYMENT_STATUSES, GRADES, REGIONS } from '../../constants/teacherOptions';
+import { TITLES, QUALIFICATIONS, MARITAL_STATUSES, EMPLOYMENT_STATUSES, GRADES, REGIONS, NATIONALITIES } from '../../constants/teacherOptions';
+import { useAuth } from '../../context/AuthContext';
 
 const ROLES = ['teacher', 'hr_officer', 'examiner', 'admin'];
+
+// Employment dates can't sensibly predate the public service's modern era or
+// land in the future — without bounds a date picker happily accepts year
+// "0001", which has actually been picked by mistake before.
+const MIN_EMPLOYMENT_DATE = '1950-01-01';
+const TODAY = new Date().toISOString().split('T')[0];
 
 const steps = ['Account', 'Personal', 'Identification & Statutory', 'Academic', 'Professional', 'Employment', 'Health'];
 
@@ -40,11 +47,13 @@ interface FieldProps {
   options?: string[];
   required?: boolean;
   placeholder?: string;
+  min?: string;
+  max?: string;
 }
 
 const Field = ({
   label, field, value, onChange,
-  type = 'text', options, required = false, placeholder = ''
+  type = 'text', options, required = false, placeholder = '', min, max
 }: FieldProps) => (
   <div>
     <label className={labelClass}>
@@ -71,6 +80,21 @@ const Field = ({
         />
         <span className="text-sm text-gray-600">Yes</span>
       </div>
+    ) : type === 'yesno' ? (
+      <div className="flex items-center gap-5 mt-2">
+        {([{ label: 'Yes', val: true }, { label: 'No', val: false }]).map(({ label: optLabel, val: optValue }) => (
+          <label key={optLabel} className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+            <input
+              type="radio"
+              name={field}
+              checked={value === optValue}
+              onChange={() => onChange(field, optValue)}
+              className="w-4 h-4 accent-blue-600 cursor-pointer"
+            />
+            {optLabel}
+          </label>
+        ))}
+      </div>
     ) : type === 'file' ? (
       <label className="flex items-center gap-2 border border-dashed border-gray-300 rounded-lg px-3 py-2.5 text-sm cursor-pointer hover:border-blue-400 transition bg-gray-50">
         <Upload size={14} className="text-gray-400 shrink-0" />
@@ -95,6 +119,8 @@ const Field = ({
         className={inputClass}
         required={required}
         placeholder={placeholder}
+        min={min}
+        max={max}
       />
     )}
   </div>
@@ -114,6 +140,7 @@ const INITIAL_FORM: Record<string, any> = {
   gender: '',
   marital_status: '',
   nationality: 'Ghanaian',
+  nationality_other: '',
   hometown: '',
   residential_address: '',
   house_number: '',
@@ -151,10 +178,28 @@ const INITIAL_FORM: Record<string, any> = {
 
 const AddTeacher = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useAuth();
+  // HR officers can only create teacher accounts — creating other HR/admin/
+  // examiner accounts stays admin-only, enforced again server-side.
+  const isHrOfficer = user?.role === 'hr_officer';
+  const basePath = location.pathname.startsWith('/admin') ? '/admin' : '/hr';
+  // Each role gets its own URL (/admin/hr-officers/add, /admin/examiners/add,
+  // .../teachers/add) rather than one shared path distinguished only by
+  // navigation state — that way the sidebar's NavLink prefix-matching
+  // highlights "HR Officers" or "Examiners" correctly instead of always
+  // falling back to "Teachers". location.state.role is kept as a fallback
+  // for any caller that still passes it explicitly.
+  const presetRole = location.pathname.includes('/hr-officers/add') ? 'hr_officer'
+    : location.pathname.includes('/examiners/add') ? 'examiner'
+    : location.pathname.includes('/teachers/add') ? 'teacher'
+    : (location.state as { role?: string } | undefined)?.role;
+  const initialRole = presetRole && ROLES.includes(presetRole) ? presetRole : 'teacher';
   const [currentStep, setCurrentStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
-  const [form, setForm] = useState<Record<string, any>>(INITIAL_FORM);
-  // The role picker starts locked (it defaults to "teacher") — an admin has
+  const [form, setForm] = useState<Record<string, any>>(() => ({ ...INITIAL_FORM, role: initialRole }));
+  // The role picker starts locked (it defaults to "teacher", or whatever
+  // role was preset via navigation state) — an admin has
   // to explicitly use "Change role" to switch what kind of account they're
   // creating, rather than risk silently flipping roles mid-form.
   const [roleLocked, setRoleLocked] = useState(true);
@@ -186,6 +231,23 @@ const AddTeacher = () => {
       toast.error('Phone number must be exactly 10 digits');
       return false;
     }
+    if (currentStep === 1 && form.nationality === 'Other' && !isFilled(form.nationality_other)) {
+      toast.error('Please specify the nationality');
+      return false;
+    }
+    if (currentStep === 5) {
+      const employmentDateFields: [string, string][] = [
+        ['date_of_first_appointment', 'Date of First Appointment'],
+        ['date_of_confirmation', 'Date of Confirmation'],
+        ['date_of_current_posting', 'Date of Current Posting'],
+      ];
+      for (const [key, label] of employmentDateFields) {
+        if (form[key] && (form[key] < MIN_EMPLOYMENT_DATE || form[key] > TODAY)) {
+          toast.error(`${label} must be a real date between ${MIN_EMPLOYMENT_DATE} and today`);
+          return false;
+        }
+      }
+    }
     return true;
   };
 
@@ -202,6 +264,11 @@ const AddTeacher = () => {
   const buildFormData = () => {
     const fd = new FormData();
     Object.entries(form).forEach(([key, value]) => {
+      if (key === 'nationality_other') return;
+      if (key === 'nationality' && value === 'Other') {
+        fd.append('nationality', String(form.nationality_other || ''));
+        return;
+      }
       if (value === null || value === undefined) return;
       if (value instanceof File) {
         fd.append(key, value);
@@ -217,8 +284,11 @@ const AddTeacher = () => {
     setSubmitting(true);
     try {
       await registerAccount(buildFormData());
-      toast.success(`Teacher ${form.first_name} ${form.last_name} registered successfully!`);
-      navigate('/admin/teachers');
+      toast.success(
+        `Teacher ${form.first_name} ${form.last_name} registered. A verification code has been sent to ${form.email} — they must verify it before they can log in.`,
+        { duration: 6000 }
+      );
+      navigate(`${basePath}/teachers`);
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Registration failed');
     } finally {
@@ -245,8 +315,15 @@ const AddTeacher = () => {
         region: form.role === 'hr_officer' ? form.region : undefined,
         district: form.role === 'hr_officer' ? form.district : undefined,
       });
-      toast.success(`${form.role.replace('_', ' ')} account created successfully!`);
-      navigate('/admin/dashboard');
+      toast.success(
+        `${form.role.replace('_', ' ')} account created. A verification code has been sent to ${form.email} — they must verify it before they can log in.`,
+        { duration: 6000 }
+      );
+      navigate(
+        form.role === 'hr_officer' ? '/admin/hr-officers'
+          : form.role === 'examiner' ? '/admin/examiners'
+          : `${basePath}/dashboard`
+      );
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Account creation failed');
     } finally {
@@ -288,7 +365,11 @@ const AddTeacher = () => {
             <Field label="Marital Status" field="marital_status" value={form.marital_status}
               onChange={update} type="select" options={MARITAL_STATUSES} required />
             <Field label="Nationality" field="nationality" value={form.nationality}
-              onChange={update} required placeholder="e.g. Ghanaian" />
+              onChange={update} type="select" options={NATIONALITIES} required />
+            {form.nationality === 'Other' && (
+              <Field label="Specify Nationality" field="nationality_other" value={form.nationality_other}
+                onChange={update} required placeholder="Enter nationality" />
+            )}
             <Field label="Hometown" field="hometown" value={form.hometown}
               onChange={update} required placeholder="e.g. Tarkwa" />
             <Field label="Residential Address" field="residential_address" value={form.residential_address}
@@ -364,11 +445,14 @@ const AddTeacher = () => {
             <Field label="Current Region" field="current_region" value={form.current_region}
               onChange={update} type="select" options={REGIONS} required />
             <Field label="Date of First Appointment" field="date_of_first_appointment"
-              value={form.date_of_first_appointment} onChange={update} type="date" required />
+              value={form.date_of_first_appointment} onChange={update} type="date" required
+              min={MIN_EMPLOYMENT_DATE} max={TODAY} />
             <Field label="Date of Confirmation" field="date_of_confirmation"
-              value={form.date_of_confirmation} onChange={update} type="date" required />
+              value={form.date_of_confirmation} onChange={update} type="date" required
+              min={MIN_EMPLOYMENT_DATE} max={TODAY} />
             <Field label="Date of Current Posting" field="date_of_current_posting"
-              value={form.date_of_current_posting} onChange={update} type="date" required />
+              value={form.date_of_current_posting} onChange={update} type="date" required
+              min={MIN_EMPLOYMENT_DATE} max={TODAY} />
             <Field label="Employment Status" field="employment_status"
               value={form.employment_status} onChange={update}
               type="select" options={EMPLOYMENT_STATUSES} required />
@@ -382,7 +466,7 @@ const AddTeacher = () => {
           <div className="space-y-5">
             <Field label="Does the teacher have a disability?"
               field="disability_status" value={form.disability_status}
-              onChange={update} type="checkbox" />
+              onChange={update} type="yesno" />
             {form.disability_status && (
               <Field label="Disability Type / Description"
                 field="disability_type" value={form.disability_type}
@@ -436,51 +520,69 @@ const AddTeacher = () => {
         {/* Header */}
         <div className="flex items-center gap-3">
           <button
-            onClick={() => navigate('/admin/teachers')}
+            onClick={() => navigate(
+              form.role === 'hr_officer' ? '/admin/hr-officers'
+                : form.role === 'examiner' ? '/admin/examiners'
+                : `${basePath}/teachers`
+            )}
             className="text-gray-400 hover:text-gray-600 transition"
           >
             <ChevronLeft size={24} />
           </button>
           <div>
             <h2 className="text-xl md:text-2xl font-bold text-gray-800">
-              Create New Account
+              {isHrOfficer || presetRole === 'teacher' ? 'Add New Teacher'
+                : presetRole === 'hr_officer' ? 'Add New HR Officer'
+                : presetRole === 'examiner' ? 'Add New Examiner'
+                : 'Create New Account'}
             </h2>
             <p className="text-gray-500 text-sm">
-              Only admins can create accounts. Choose a role to get started.
+              {isHrOfficer
+                ? 'Fill in the teacher\'s details to register their account.'
+                : presetRole
+                  ? 'Fill in the account details below.'
+                  : 'Choose a role to get started.'}
             </p>
           </div>
         </div>
 
-        {/* Role selector — locked to the current selection once chosen, so
-            switching mid-form can't silently mix up data for a different
-            role. "Change role" explicitly resets the form first. */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-          <div className="flex items-center justify-between mb-1.5">
-            <label className={labelClass.replace('mb-1.5', '')}>
-              Account Role <span className="text-red-500">*</span>
-            </label>
-            {roleLocked && (
-              <button
-                type="button"
-                onClick={changeRole}
-                className="text-xs font-medium text-blue-700 hover:underline"
-              >
-                Change role
-              </button>
-            )}
+        {/* Role selector — only shown when the role genuinely needs picking.
+            HR officers can only create teacher accounts, and admins always
+            arrive here from a role-specific page (Teachers/HR Officers/
+            Examiners), each of which sets presetRole — so by the time we'd
+            render this, the role is already decided either way. Locked to
+            the current selection once chosen, so switching mid-form can't
+            silently mix up data for a different role. "Change role"
+            explicitly resets the form first. */}
+        {!isHrOfficer && !presetRole && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+            <div className="flex items-center justify-between mb-1.5">
+              <label className={labelClass.replace('mb-1.5', '')}>
+                Account Role <span className="text-red-500">*</span>
+              </label>
+              {roleLocked && (
+                <button
+                  type="button"
+                  onClick={changeRole}
+                  className="text-xs font-medium text-blue-700 hover:underline"
+                >
+                  Change role
+                </button>
+              )}
+            </div>
+            <select
+              value={form.role}
+              onChange={(e) => { update('role', e.target.value); setRoleLocked(true); }}
+              className={inputClass}
+            >
+              {ROLES.map((r) => (
+                <option key={r} value={r} disabled={roleLocked && r !== form.role}>
+                  {r.replace(/_/g, ' ')}
+                </option>
+              ))}
+            </select>
           </div>
-          <select
-            value={form.role}
-            onChange={(e) => { update('role', e.target.value); setRoleLocked(true); }}
-            className={inputClass}
-          >
-            {ROLES.map((r) => (
-              <option key={r} value={r} disabled={roleLocked && r !== form.role}>
-                {r.replace(/_/g, ' ')}
-              </option>
-            ))}
-          </select>
-        </div>
+        )}
 
         {form.role !== 'teacher' ? (
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-5">

@@ -4,13 +4,12 @@ import { useAuth } from '../../context/AuthContext';
 import {
   LayoutDashboard, Users, ArrowLeftRight,
   TrendingUp, BarChart3, FileText, Menu, X,
-  BookOpen, ClipboardEdit, UserPlus, ShieldCheck, UserCog, ClipboardCheck
+  BookOpen, ClipboardEdit, ShieldCheck, UserCog, ClipboardCheck
 } from 'lucide-react';
 
 const hrLinks = [
   { to: '/hr/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/hr/teachers', icon: Users, label: 'Teachers' },
-  { to: '/hr/teachers/add', icon: UserPlus, label: 'Add Teacher' },
   { heading: 'Applications' },
   { to: '/hr/transfers', icon: ArrowLeftRight, label: 'Transfers' },
   { to: '/hr/promotions', icon: TrendingUp, label: 'Promotions' },

@@ -52,7 +52,6 @@ function App() {
         {/* HR Routes */}
         <Route path="/hr/dashboard" element={<ProtectedRoute roles={['hr_officer']}><HRDashboard /></ProtectedRoute>} />
         <Route path="/hr/teachers" element={<ProtectedRoute roles={['hr_officer']}><HRTeachers /></ProtectedRoute>} />
-        <Route path="/hr/teachers/add" element={<ProtectedRoute roles={['hr_officer']}><AddTeacher /></ProtectedRoute>} />
         <Route path="/hr/transfers" element={<ProtectedRoute roles={['hr_officer']}><HRTransfers /></ProtectedRoute>} />
         <Route path="/hr/promotions" element={<ProtectedRoute roles={['hr_officer']}><HRPromotions /></ProtectedRoute>} />
         <Route path="/hr/exams" element={<ProtectedRoute roles={['hr_officer']}><HRExams /></ProtectedRoute>} />

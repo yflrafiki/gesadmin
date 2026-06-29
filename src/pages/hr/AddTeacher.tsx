@@ -5,7 +5,6 @@ import toast from 'react-hot-toast';
 import { registerAccount } from '../../api/auth';
 import { ChevronLeft, ChevronRight, UserPlus, Upload, History } from 'lucide-react';
 import { TITLES, QUALIFICATIONS, MARITAL_STATUSES, EMPLOYMENT_STATUSES, GRADES, REGIONS, NATIONALITIES } from '../../constants/teacherOptions';
-import { useAuth } from '../../context/AuthContext';
 
 const ROLES = ['teacher', 'hr_officer', 'examiner', 'admin'];
 
@@ -233,10 +232,6 @@ const INITIAL_FORM: Record<string, any> = {
 const AddTeacher = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth();
-  // HR officers can only create teacher accounts — creating other HR/admin/
-  // examiner accounts stays admin-only, enforced again server-side.
-  const isHrOfficer = user?.role === 'hr_officer';
   const basePath = location.pathname.startsWith('/admin') ? '/admin' : '/hr';
   // Each role gets its own URL (/admin/hr-officers/add, /admin/examiners/add,
   // .../teachers/add) rather than one shared path distinguished only by
@@ -670,13 +665,13 @@ const AddTeacher = () => {
           </button>
           <div>
             <h2 className="text-xl md:text-2xl font-bold text-gray-800">
-              {isHrOfficer || presetRole === 'teacher' ? 'Add New Teacher'
+              {presetRole === 'teacher' ? 'Add New Teacher'
                 : presetRole === 'hr_officer' ? 'Add New HR Officer'
                 : presetRole === 'examiner' ? 'Add New Examiner'
                 : 'Create New Account'}
             </h2>
             <p className="text-gray-500 text-sm">
-              {isHrOfficer
+              {presetRole === 'teacher'
                 ? 'Fill in the teacher\'s details to register their account.'
                 : presetRole
                   ? 'Fill in the account details below.'
@@ -706,14 +701,13 @@ const AddTeacher = () => {
         )}
 
         {/* Role selector — only shown when the role genuinely needs picking.
-            HR officers can only create teacher accounts, and admins always
-            arrive here from a role-specific page (Teachers/HR Officers/
-            Examiners), each of which sets presetRole — so by the time we'd
-            render this, the role is already decided either way. Locked to
+            Admins always arrive here from a role-specific page (Teachers/
+            HR Officers/Examiners), each of which sets presetRole — so by the
+            time we'd render this, the role is already decided. Locked to
             the current selection once chosen, so switching mid-form can't
             silently mix up data for a different role. "Change role"
             explicitly resets the form first. */}
-        {!isHrOfficer && !presetRole && (
+        {!presetRole && (
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
             <div className="flex items-center justify-between mb-1.5">
               <label className={labelClass.replace('mb-1.5', '')}>

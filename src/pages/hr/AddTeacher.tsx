@@ -1,13 +1,69 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Layout from '../../components/layout/Layout';
 import toast from 'react-hot-toast';
 import { registerAccount } from '../../api/auth';
-import { ChevronLeft, ChevronRight, UserPlus, Upload } from 'lucide-react';
+import { ChevronLeft, ChevronRight, UserPlus, Upload, History } from 'lucide-react';
 import { TITLES, QUALIFICATIONS, MARITAL_STATUSES, EMPLOYMENT_STATUSES, GRADES, REGIONS, NATIONALITIES } from '../../constants/teacherOptions';
 import { useAuth } from '../../context/AuthContext';
 
 const ROLES = ['teacher', 'hr_officer', 'examiner', 'admin'];
+
+// A refresh mid-form used to wipe out everything the admin had typed —
+// this is a long intake form, so we autosave to sessionStorage on every
+// change and restore it on mount. sessionStorage only stores strings, so
+// File objects are stripped out of that JSON blob and persisted separately
+// via IndexedDB instead (the one browser storage that can actually hold a
+// Blob/File across a refresh) — see saveDraftFile/loadDraftFile below.
+const DRAFT_KEY = 'addTeacherDraft';
+const FILE_FIELDS = ['nss_certificate', 'degree_certificate', 'appointment_letter'];
+
+const sanitizeForStorage = (formData: Record<string, any>) => {
+  const clean: Record<string, any> = {};
+  for (const [key, value] of Object.entries(formData)) {
+    clean[key] = value instanceof File ? null : value;
+  }
+  return clean;
+};
+
+const FILES_DB_NAME = 'gesAddTeacherDraftFiles';
+const FILES_STORE_NAME = 'files';
+
+const openDraftFilesDB = (): Promise<IDBDatabase> => new Promise((resolve, reject) => {
+  const request = indexedDB.open(FILES_DB_NAME, 1);
+  request.onupgradeneeded = () => { request.result.createObjectStore(FILES_STORE_NAME); };
+  request.onsuccess = () => resolve(request.result);
+  request.onerror = () => reject(request.error);
+});
+
+const saveDraftFile = async (field: string, file: File) => {
+  const db = await openDraftFilesDB();
+  return new Promise<void>((resolve, reject) => {
+    const tx = db.transaction(FILES_STORE_NAME, 'readwrite');
+    tx.objectStore(FILES_STORE_NAME).put(file, field);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+};
+
+const loadDraftFile = async (field: string): Promise<File | null> => {
+  const db = await openDraftFilesDB();
+  return new Promise((resolve, reject) => {
+    const req = db.transaction(FILES_STORE_NAME, 'readonly').objectStore(FILES_STORE_NAME).get(field);
+    req.onsuccess = () => resolve((req.result as File) || null);
+    req.onerror = () => reject(req.error);
+  });
+};
+
+const clearDraftFiles = async () => {
+  const db = await openDraftFilesDB();
+  return new Promise<void>((resolve, reject) => {
+    const tx = db.transaction(FILES_STORE_NAME, 'readwrite');
+    tx.objectStore(FILES_STORE_NAME).clear();
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+};
 
 // Employment dates can't sensibly predate the public service's modern era or
 // land in the future — without bounds a date picker happily accepts year
@@ -159,7 +215,6 @@ const INITIAL_FORM: Record<string, any> = {
   subject_specialization: '',
   qualification: '',
   current_grade: '',
-  years_of_service: 0,
   national_date_of_present_rank: '',
   current_school: '',
   current_district: '',
@@ -194,24 +249,102 @@ const AddTeacher = () => {
     : location.pathname.includes('/teachers/add') ? 'teacher'
     : (location.state as { role?: string } | undefined)?.role;
   const initialRole = presetRole && ROLES.includes(presetRole) ? presetRole : 'teacher';
-  const [currentStep, setCurrentStep] = useState(0);
+
+  // Restore an in-progress draft once, on first render — a draft only
+  // applies if it matches the role this page is for, so navigating to a
+  // different "Add X" page never pulls in someone else's leftover draft.
+  const [draftState] = useState(() => {
+    try {
+      const raw = sessionStorage.getItem(DRAFT_KEY);
+      if (!raw) return null;
+      const draft = JSON.parse(raw);
+      if (presetRole && draft.role !== presetRole) return null;
+      return draft as { role: string; currentStep: number; form: Record<string, any>; hadFiles: boolean };
+    } catch {
+      return null;
+    }
+  });
+
+  const [currentStep, setCurrentStep] = useState(draftState?.currentStep ?? 0);
   const [submitting, setSubmitting] = useState(false);
-  const [form, setForm] = useState<Record<string, any>>(() => ({ ...INITIAL_FORM, role: initialRole }));
+  const [form, setForm] = useState<Record<string, any>>(() => ({
+    ...INITIAL_FORM,
+    role: initialRole,
+    ...(draftState?.form || {}),
+  }));
   // The role picker starts locked (it defaults to "teacher", or whatever
   // role was preset via navigation state) — an admin has
   // to explicitly use "Change role" to switch what kind of account they're
   // creating, rather than risk silently flipping roles mid-form.
   const [roleLocked, setRoleLocked] = useState(true);
+  const [restoredDraft, setRestoredDraft] = useState(Boolean(draftState));
+  const [draftHadFiles] = useState(Boolean(draftState?.hadFiles));
+
+  // Autosave on every change — files can't be serialized, so they're
+  // stripped before saving (see sanitizeForStorage / FILE_FIELDS).
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(DRAFT_KEY, JSON.stringify({
+        role: form.role,
+        currentStep,
+        form: sanitizeForStorage(form),
+        hadFiles: FILE_FIELDS.some((f) => form[f] instanceof File),
+      }));
+    } catch {
+      // sessionStorage unavailable/full — not critical, just skip persisting.
+    }
+  }, [form, currentStep]);
+
+  // Restore any previously-attached documents from IndexedDB — runs once,
+  // only when the restored draft actually had files, so a fresh page load
+  // with nothing to restore doesn't even touch IndexedDB.
+  useEffect(() => {
+    if (!draftState?.hadFiles) return;
+    (async () => {
+      const updates: Record<string, File> = {};
+      for (const field of FILE_FIELDS) {
+        try {
+          const file = await loadDraftFile(field);
+          if (file) updates[field] = file;
+        } catch {
+          // IndexedDB unavailable (e.g. private browsing) — that field just
+          // stays empty and the admin re-attaches it, same as before.
+        }
+      }
+      if (Object.keys(updates).length > 0) {
+        setForm((prev) => ({ ...prev, ...updates }));
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const clearDraft = () => {
+    try { sessionStorage.removeItem(DRAFT_KEY); } catch {}
+    clearDraftFiles().catch(() => {});
+  };
+
+  const discardDraft = () => {
+    clearDraft();
+    setForm({ ...INITIAL_FORM, role: initialRole });
+    setCurrentStep(0);
+    setRestoredDraft(false);
+  };
 
   const changeRole = () => {
+    clearDraft();
     setForm(INITIAL_FORM);
     setCurrentStep(0);
     setRoleLocked(false);
+    setRestoredDraft(false);
   };
 
   // ✅ Stable update function
-  const update = (field: string, value: any) =>
+  const update = (field: string, value: any) => {
     setForm(prev => ({ ...prev, [field]: value }));
+    if (FILE_FIELDS.includes(field) && value instanceof File) {
+      saveDraftFile(field, value).catch(() => {});
+    }
+  };
 
   // Every field in REQUIRED_FIELDS for the current step must be filled in —
   // this is a mandatory intake form, admins can't skip ahead with gaps.
@@ -283,6 +416,7 @@ const AddTeacher = () => {
     setSubmitting(true);
     try {
       await registerAccount(buildFormData());
+      clearDraft();
       toast.success(
         `Teacher ${form.first_name} ${form.last_name} registered. A verification code has been sent to ${form.email} — they must verify it before they can log in.`,
         { duration: 6000 }
@@ -314,6 +448,7 @@ const AddTeacher = () => {
         region: form.role === 'hr_officer' ? form.region : undefined,
         district: form.role === 'hr_officer' ? form.district : undefined,
       });
+      clearDraft();
       toast.success(
         `${form.role.replace('_', ' ')} account created. A verification code has been sent to ${form.email} — they must verify it before they can log in.`,
         { duration: 6000 }
@@ -425,8 +560,6 @@ const AddTeacher = () => {
               required placeholder="e.g. Mathematics" />
             <Field label="Current Grade / Rank" field="current_grade" value={form.current_grade}
               onChange={update} type="select" options={GRADES} required />
-            <Field label="Years of Service" field="years_of_service"
-              value={form.years_of_service} onChange={update} type="number" />
             <div>
               <Field label="National Date of Present Rank" field="national_date_of_present_rank"
                 value={form.national_date_of_present_rank} onChange={update} type="date" required />
@@ -446,9 +579,14 @@ const AddTeacher = () => {
               onChange={update} required placeholder="e.g. Tarkwa-Nsuaem" />
             <Field label="Current Region" field="current_region" value={form.current_region}
               onChange={update} type="select" options={REGIONS} required />
-            <Field label="Date of First Appointment" field="date_of_first_appointment"
-              value={form.date_of_first_appointment} onChange={update} type="date" required
-              min={MIN_EMPLOYMENT_DATE} max={TODAY} />
+            <div>
+              <Field label="Date of First Appointment" field="date_of_first_appointment"
+                value={form.date_of_first_appointment} onChange={update} type="date" required
+                min={MIN_EMPLOYMENT_DATE} max={TODAY} />
+              <p className="text-xs text-gray-400 mt-1">
+                Years of service is calculated automatically from this date.
+              </p>
+            </div>
             <Field label="Date of Confirmation" field="date_of_confirmation"
               value={form.date_of_confirmation} onChange={update} type="date" required
               min={MIN_EMPLOYMENT_DATE} max={TODAY} />
@@ -495,7 +633,6 @@ const AddTeacher = () => {
                   ['Qualification', form.qualification],
                   ['Institution', form.institution_attended],
                   ['Subject', form.subject_specialization],
-                  ['Years of Service', String(form.years_of_service)],
                   ['NTC License No.', form.ntc_license_number],
                   ['NSS Number', form.nss_number],
                   ['SSNIT Number', form.ssnit_number],
@@ -547,6 +684,26 @@ const AddTeacher = () => {
             </p>
           </div>
         </div>
+
+        {/* Restored-draft banner — shown once, on the page load that picked
+            the autosaved progress back up. */}
+        {restoredDraft && (
+          <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 flex items-start justify-between gap-3 text-sm">
+            <div className="flex items-start gap-2 text-blue-700">
+              <History size={16} className="shrink-0 mt-0.5" />
+              <p>
+                Restored your unsaved progress from before{draftHadFiles ? ', including your attached documents' : ''}.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={discardDraft}
+              className="text-blue-700 font-medium hover:underline whitespace-nowrap"
+            >
+              Discard &amp; start over
+            </button>
+          </div>
+        )}
 
         {/* Role selector — only shown when the role genuinely needs picking.
             HR officers can only create teacher accounts, and admins always

@@ -90,7 +90,6 @@ const EditTeacher = () => {
     subject_specialization: '',
     qualification: '',
     current_grade: '',
-    years_of_service: 0,
     national_date_of_present_rank: '',
     current_school: '',
     current_district: '',
@@ -118,7 +117,6 @@ const EditTeacher = () => {
           subject_specialization: teacherData.subject_specialization ?? '',
           qualification: teacherData.qualification ?? '',
           current_grade: teacherData.current_grade ?? '',
-          years_of_service: teacherData.years_of_service ?? 0,
           national_date_of_present_rank: teacherData.national_date_of_present_rank ?? '',
           current_school: teacherData.current_school ?? '',
           current_district: teacherData.current_district ?? '',
@@ -172,10 +170,6 @@ const EditTeacher = () => {
     setValue('disability_status', form.disability_status);
     setValue('disability_type', form.disability_type);
 
-    if (form.years_of_service !== undefined && form.years_of_service !== '') {
-      payload.years_of_service = Number(form.years_of_service);
-    }
-
     return payload;
   };
 
@@ -211,7 +205,7 @@ const EditTeacher = () => {
         <div className="flex items-center justify-between gap-3">
           <div>
             <h2 className="text-xl md:text-2xl font-bold text-gray-800">Edit Teacher</h2>
-            <p className="text-gray-500 text-sm">Update teacher details and ensure years of service is included.</p>
+            <p className="text-gray-500 text-sm">Update teacher details.</p>
           </div>
           <button
             onClick={() => navigate('/hr/teachers')}
@@ -230,7 +224,12 @@ const EditTeacher = () => {
             <Field label="Subject Specialization" field="subject_specialization" value={form.subject_specialization} onChange={update} placeholder="e.g. Mathematics" />
             <Field label="Qualification" field="qualification" value={form.qualification} onChange={update} type="select" options={QUALIFICATIONS} />
             <Field label="Current Grade / Rank" field="current_grade" value={form.current_grade} onChange={update} type="select" options={GRADES} />
-            <Field label="Years of Service" field="years_of_service" value={form.years_of_service} onChange={update} type="number" />
+            <div>
+              <Field label="Date of First Appointment" field="date_of_first_appointment" value={form.date_of_first_appointment} onChange={update} type="date" />
+              <p className="text-xs text-gray-400 mt-1">
+                Years of service: <strong>{teacher?.years_of_service ?? '—'}</strong> (calculated automatically from this date)
+              </p>
+            </div>
             <div>
               <Field label="National Date of Present Rank" field="national_date_of_present_rank" value={form.national_date_of_present_rank} onChange={update} type="date" />
               <p className="text-xs text-gray-400 mt-1">

@@ -1,7 +1,8 @@
 import API from './axios';
+import { cached } from '../lib/cache';
 
 export const getDashboardSummary = () =>
-  API.get('/reports/summary');
+  cached('dashboard:summary', 5 * 60_000, () => API.get('/reports/summary'));
 
 export const getTransferReport = (params?: object) =>
   API.get('/reports/transfers', { params });

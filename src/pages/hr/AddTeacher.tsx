@@ -3,8 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Layout from '../../components/layout/Layout';
 import toast from 'react-hot-toast';
 import { registerAccount } from '../../api/auth';
-import { ChevronLeft, ChevronRight, UserPlus, Upload, History } from 'lucide-react';
-import { TITLES, QUALIFICATIONS, MARITAL_STATUSES, EMPLOYMENT_STATUSES, GRADES, REGIONS, NATIONALITIES } from '../../constants/teacherOptions';
+import { ChevronLeft, ChevronRight, UserPlus, Upload } from 'lucide-react';
+import { TITLES, QUALIFICATIONS, MARITAL_STATUSES, EMPLOYMENT_STATUSES, GRADES, REGIONS, NATIONALITIES, GHANA_SCHOOLS, GHANA_INSTITUTIONS } from '../../constants/teacherOptions';
 
 const ROLES = ['teacher', 'hr_officer', 'examiner', 'admin'];
 
@@ -181,6 +181,42 @@ const Field = ({
   </div>
 );
 
+// Searchable combobox — filters as the admin types, falls back to free text.
+const Combobox = ({ label, field, list, value, onChange, required }: {
+  label: string; field: string; list: string[];
+  value: string; onChange: (field: string, value: string) => void; required?: boolean;
+}) => {
+  const [query, setQuery] = useState(value || '');
+  const [open, setOpen] = useState(false);
+  const matches = query.length >= 2
+    ? list.filter(s => s.toLowerCase().includes(query.toLowerCase())).slice(0, 8)
+    : [];
+  return (
+    <div className="relative">
+      <label className={labelClass}>{label} {required && <span className="text-red-500">*</span>}</label>
+      <input
+        type="text"
+        value={query}
+        onChange={e => { setQuery(e.target.value); onChange(field, e.target.value); setOpen(true); }}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setTimeout(() => setOpen(false), 150)}
+        className={inputClass}
+        placeholder={`Type to search ${label.toLowerCase()}...`}
+      />
+      {open && matches.length > 0 && (
+        <ul className="absolute z-50 w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-1 max-h-52 overflow-y-auto">
+          {matches.map(item => (
+            <li key={item} onMouseDown={() => { onChange(field, item); setQuery(item); setOpen(false); }}
+              className="px-3 py-2 text-sm cursor-pointer hover:bg-blue-50 hover:text-blue-700 transition-colors">
+              {item}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
+
 const INITIAL_FORM: Record<string, any> = {
   email: '',
   password: 'password123',
@@ -272,8 +308,6 @@ const AddTeacher = () => {
   // to explicitly use "Change role" to switch what kind of account they're
   // creating, rather than risk silently flipping roles mid-form.
   const [roleLocked, setRoleLocked] = useState(true);
-  const [restoredDraft, setRestoredDraft] = useState(Boolean(draftState));
-  const [draftHadFiles] = useState(Boolean(draftState?.hadFiles));
 
   // Autosave on every change — files can't be serialized, so they're
   // stripped before saving (see sanitizeForStorage / FILE_FIELDS).
@@ -318,19 +352,11 @@ const AddTeacher = () => {
     clearDraftFiles().catch(() => {});
   };
 
-  const discardDraft = () => {
-    clearDraft();
-    setForm({ ...INITIAL_FORM, role: initialRole });
-    setCurrentStep(0);
-    setRestoredDraft(false);
-  };
-
   const changeRole = () => {
     clearDraft();
     setForm(INITIAL_FORM);
     setCurrentStep(0);
     setRoleLocked(false);
-    setRestoredDraft(false);
   };
 
   // ✅ Stable update function
@@ -532,8 +558,7 @@ const AddTeacher = () => {
       case 3:
         return (
           <div className="space-y-5">
-            <Field label="Institution Attended" field="institution_attended" value={form.institution_attended}
-              onChange={update} required placeholder="e.g. University of Education, Winneba" />
+            <Combobox label="Institution Attended" field="institution_attended" list={GHANA_INSTITUTIONS} value={form.institution_attended} onChange={update} required />
             <Field label="Graduation Date" field="graduation_date" value={form.graduation_date}
               onChange={update} type="date" required />
             <Field label="Student Index Number" field="student_index_number" value={form.student_index_number}
@@ -568,8 +593,7 @@ const AddTeacher = () => {
       case 5:
         return (
           <div className="space-y-5">
-            <Field label="Current School" field="current_school" value={form.current_school}
-              onChange={update} required placeholder="e.g. Tarkwa Senior High School" />
+            <Combobox label="Current School" field="current_school" list={GHANA_SCHOOLS} value={form.current_school} onChange={update} required />
             <Field label="Current District" field="current_district" value={form.current_district}
               onChange={update} required placeholder="e.g. Tarkwa-Nsuaem" />
             <Field label="Current Region" field="current_region" value={form.current_region}
@@ -680,25 +704,6 @@ const AddTeacher = () => {
           </div>
         </div>
 
-        {/* Restored-draft banner — shown once, on the page load that picked
-            the autosaved progress back up. */}
-        {restoredDraft && (
-          <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 flex items-start justify-between gap-3 text-sm">
-            <div className="flex items-start gap-2 text-blue-700">
-              <History size={16} className="shrink-0 mt-0.5" />
-              <p>
-                Restored your unsaved progress from before{draftHadFiles ? ', including your attached documents' : ''}.
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={discardDraft}
-              className="text-blue-700 font-medium hover:underline whitespace-nowrap"
-            >
-              Discard &amp; start over
-            </button>
-          </div>
-        )}
 
         {/* Role selector — only shown when the role genuinely needs picking.
             Admins always arrive here from a role-specific page (Teachers/

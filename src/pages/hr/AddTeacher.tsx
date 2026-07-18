@@ -15,7 +15,7 @@ const ROLES = ['teacher', 'hr_officer', 'examiner', 'admin'];
 // via IndexedDB instead (the one browser storage that can actually hold a
 // Blob/File across a refresh) — see saveDraftFile/loadDraftFile below.
 const DRAFT_KEY = 'addTeacherDraft';
-const FILE_FIELDS = ['nss_certificate', 'degree_certificate', 'appointment_letter'];
+const FILE_FIELDS = ['appointment_letter'];
 
 const sanitizeForStorage = (formData: Record<string, any>) => {
   const clean: Record<string, any> = {};
@@ -77,8 +77,8 @@ const steps = ['Account', 'Personal', 'Identification & Statutory', 'Academic', 
 const REQUIRED_FIELDS: Record<number, [string, string][]> = {
   0: [['email', 'Email Address'], ['staff_id', 'Staff ID'], ['date_of_birth', 'Date of Birth'], ['first_name', 'First Name'], ['last_name', 'Last Name']],
   1: [['title', 'Title'], ['gender', 'Gender'], ['phone', 'Phone Number'], ['marital_status', 'Marital Status'], ['nationality', 'Nationality'], ['hometown', 'Hometown'], ['residential_address', 'Residential Address']],
-  2: [['ghana_card_number', 'Ghana Card Number'], ['house_number', 'House Number'], ['ghana_card_issue_date', 'Ghana Card Issue Date'], ['ghana_card_expiry_date', 'Ghana Card Expiry Date'], ['ntc_license_number', 'NTC License Number'], ['ssnit_number', 'SSNIT Number'], ['nss_number', 'NSS Number'], ['nss_certificate', 'NSS Certificate']],
-  3: [['institution_attended', 'Institution Attended'], ['graduation_date', 'Graduation Date'], ['student_index_number', 'Student Index Number'], ['qualification', 'Qualification'], ['major_minor_courses', 'Major / Minor Courses'], ['degree_certificate', 'Degree / Diploma Certificate']],
+  2: [['ghana_card_number', 'Ghana Card Number'], ['house_number', 'House Number'], ['ghana_card_issue_date', 'Ghana Card Issue Date'], ['ghana_card_expiry_date', 'Ghana Card Expiry Date'], ['ntc_license_number', 'NTC License Number'], ['ssnit_number', 'SSNIT Number'], ['nss_number', 'NSS Number']],
+  3: [['institution_attended', 'Institution Attended'], ['graduation_date', 'Graduation Date'], ['student_index_number', 'Student Index Number'], ['qualification', 'Qualification'], ['major_minor_courses', 'Major / Minor Courses']],
   4: [['subject_specialization', 'Subject Specialization'], ['current_grade', 'Current Grade / Rank'], ['national_date_of_present_rank', 'National Date of Present Rank']],
   5: [['current_school', 'Current School'], ['current_district', 'Current District'], ['current_region', 'Current Region'], ['date_of_first_appointment', 'Date of First Appointment'], ['date_of_confirmation', 'Date of Confirmation'], ['date_of_current_posting', 'Date of Current Posting'], ['employment_status', 'Employment Status'], ['appointment_letter', 'Appointment / Promotion Letter']],
 };
@@ -104,11 +104,12 @@ interface FieldProps {
   placeholder?: string;
   min?: string;
   max?: string;
+  maxLength?: number;
 }
 
 const Field = ({
   label, field, value, onChange,
-  type = 'text', options, required = false, placeholder = '', min, max
+  type = 'text', options, required = false, placeholder = '', min, max, maxLength
 }: FieldProps) => (
   <div>
     <label className={labelClass}>
@@ -176,6 +177,7 @@ const Field = ({
         placeholder={placeholder}
         min={min}
         max={max}
+        maxLength={maxLength}
       />
     )}
   </div>
@@ -240,13 +242,11 @@ const INITIAL_FORM: Record<string, any> = {
   ghana_card_expiry_date: '',
   ntc_license_number: '',
   nss_number: '',
-  nss_certificate: null,
   ssnit_number: '',
   institution_attended: '',
   graduation_date: '',
   major_minor_courses: '',
   student_index_number: '',
-  degree_certificate: null,
   subject_specialization: '',
   qualification: '',
   current_grade: '',
@@ -515,8 +515,22 @@ const AddTeacher = () => {
               onChange={update} type="select" options={TITLES} required />
             <Field label="Gender" field="gender" value={form.gender}
               onChange={update} type="select" options={['Male', 'Female']} required />
-            <Field label="Phone Number (10 digits)" field="phone" value={form.phone}
-              onChange={update} type="tel" required placeholder="e.g. 0244123456" />
+            <Field
+              label="Phone Number"
+              field="phone"
+              value={form.phone}
+              onChange={(f, v) => update(f, String(v).replace(/\D/g, '').slice(0, 10))}
+              type="tel"
+              required
+              placeholder="e.g. 0244123456"
+              maxLength={10}
+            />
+            {form.phone.length > 0 && !form.phone.startsWith('0') && (
+              <p className="text-xs text-red-500 mt-1">Phone number must start with 0</p>
+            )}
+            {form.phone.length > 0 && form.phone.length < 10 && form.phone.startsWith('0') && (
+              <p className="text-xs text-amber-500 mt-1">{10 - form.phone.length} more digit{10 - form.phone.length !== 1 ? 's' : ''} needed</p>
+            )}
             <Field label="Marital Status" field="marital_status" value={form.marital_status}
               onChange={update} type="select" options={MARITAL_STATUSES} required />
             <Field label="Nationality" field="nationality" value={form.nationality}
@@ -550,8 +564,6 @@ const AddTeacher = () => {
               onChange={update} required placeholder="e.g. C123456789012" />
             <Field label="NSS Number" field="nss_number" value={form.nss_number}
               onChange={update} required placeholder="National Service number" />
-            <Field label="NSS Certificate" field="nss_certificate" value={form.nss_certificate}
-              onChange={update} type="file" required />
           </div>
         );
 
@@ -567,8 +579,6 @@ const AddTeacher = () => {
               onChange={update} type="select" options={QUALIFICATIONS} required />
             <Field label="Major / Minor Courses" field="major_minor_courses" value={form.major_minor_courses}
               onChange={update} required placeholder="e.g. Maths (Major), Science (Minor)" />
-            <Field label="Degree / Diploma Certificate" field="degree_certificate" value={form.degree_certificate}
-              onChange={update} type="file" required />
           </div>
         );
 

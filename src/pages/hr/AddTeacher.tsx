@@ -160,7 +160,7 @@ const Field = ({
         <input
           type="file"
           className="hidden"
-          accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+          accept=".pdf,.jpg,.jpeg,.png,.gif,.webp"
           onChange={(e) => onChange(field, e.target.files?.[0] || null)}
         />
       </label>

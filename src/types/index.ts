@@ -110,10 +110,13 @@ export interface DashboardSummary {
     total_examiners: number;
     total_applications: number;
     recent_applications_7days: number;
+    region: string | null;
   };
   transfers: { status: string; count: string }[];
   promotions: { status: string; count: string }[];
   credentials: { verification_status: string; count: string }[];
   teachers_by_region: { current_region: string; count: string }[];
   teachers_by_grade: { current_grade: string; count: string }[];
+  teachers_by_district: { current_district: string; count: string }[];
+  teachers_by_qualification: { qualification: string; count: string }[];
 }
